@@ -1,0 +1,432 @@
+
+run=1 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5598 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.0042208330000000002,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=2 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5599 tid 7427 thread 1 bound to OS proc set {undefined}
+OMP: pid 5599 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.0090919580000000007,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=3 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5600 tid 2563 thread 3 bound to OS proc set {undefined}
+OMP: pid 5600 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5600 tid 2307 thread 2 bound to OS proc set {undefined}
+OMP: pid 5600 tid 7171 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.012449167000000001,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=4 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5601 tid 7427 thread 3 bound to OS proc set {undefined}
+OMP: pid 5601 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5601 tid 7171 thread 4 bound to OS proc set {undefined}
+OMP: pid 5601 tid 2819 thread 2 bound to OS proc set {undefined}
+OMP: pid 5601 tid 6403 thread 7 bound to OS proc set {undefined}
+OMP: pid 5601 tid 6659 thread 6 bound to OS proc set {undefined}
+OMP: pid 5601 tid 7683 thread 1 bound to OS proc set {undefined}
+OMP: pid 5601 tid 6915 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.035569416,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=5 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5602 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.015272833,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=6 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5603 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5603 tid 2819 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.015778500000000001,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=7 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5604 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5604 tid 3075 thread 3 bound to OS proc set {undefined}
+OMP: pid 5604 tid 2819 thread 2 bound to OS proc set {undefined}
+OMP: pid 5604 tid 2563 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.019827958999999999,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=8 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5605 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5605 tid 6915 thread 4 bound to OS proc set {undefined}
+OMP: pid 5605 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5605 tid 2563 thread 2 bound to OS proc set {undefined}
+OMP: pid 5605 tid 2307 thread 1 bound to OS proc set {undefined}
+OMP: pid 5605 tid 3075 thread 6 bound to OS proc set {undefined}
+OMP: pid 5605 tid 3331 thread 7 bound to OS proc set {undefined}
+OMP: pid 5605 tid 2819 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.041425375,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=9 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5606 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.063539374999999995,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=10 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5607 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5607 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.042135249999999999,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=11 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5608 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5608 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5608 tid 7427 thread 2 bound to OS proc set {undefined}
+OMP: pid 5608 tid 2563 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.037320832999999998,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=12 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5609 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5609 tid 2819 thread 4 bound to OS proc set {undefined}
+OMP: pid 5609 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5609 tid 7427 thread 2 bound to OS proc set {undefined}
+OMP: pid 5609 tid 3331 thread 7 bound to OS proc set {undefined}
+OMP: pid 5609 tid 2563 thread 1 bound to OS proc set {undefined}
+OMP: pid 5609 tid 6915 thread 6 bound to OS proc set {undefined}
+OMP: pid 5609 tid 3075 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.054403166000000003,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=13 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5610 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.30042312500000001,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=14 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5611 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5611 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.18020449999999999,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=15 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5620 tid 3075 thread 3 bound to OS proc set {undefined}
+OMP: pid 5620 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5620 tid 7683 thread 2 bound to OS proc set {undefined}
+OMP: pid 5620 tid 2819 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.18733491599999999,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=16 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5632 tid 2819 thread 3 bound to OS proc set {undefined}
+OMP: pid 5632 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5632 tid 2563 thread 2 bound to OS proc set {undefined}
+OMP: pid 5632 tid 3075 thread 4 bound to OS proc set {undefined}
+OMP: pid 5632 tid 7427 thread 1 bound to OS proc set {undefined}
+OMP: pid 5632 tid 7171 thread 6 bound to OS proc set {undefined}
+OMP: pid 5632 tid 6915 thread 7 bound to OS proc set {undefined}
+OMP: pid 5632 tid 3331 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.16599333299999999,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=17 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5633 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5633 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5633 tid 2563 thread 2 bound to OS proc set {undefined}
+OMP: pid 5633 tid 6915 thread 4 bound to OS proc set {undefined}
+OMP: pid 5633 tid 6659 thread 6 bound to OS proc set {undefined}
+OMP: pid 5633 tid 6403 thread 7 bound to OS proc set {undefined}
+OMP: pid 5633 tid 2819 thread 5 bound to OS proc set {undefined}
+OMP: pid 5633 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.054712333000000002,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=18 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5634 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5634 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.17850883300000001,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=19 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5637 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.27196454199999998,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=20 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5639 tid 7427 thread 1 bound to OS proc set {undefined}
+OMP: pid 5639 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.193426083,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=21 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5649 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5649 tid 2819 thread 3 bound to OS proc set {undefined}
+OMP: pid 5649 tid 7171 thread 4 bound to OS proc set {undefined}
+OMP: pid 5649 tid 7427 thread 2 bound to OS proc set {undefined}
+OMP: pid 5649 tid 2563 thread 1 bound to OS proc set {undefined}
+OMP: pid 5649 tid 3331 thread 6 bound to OS proc set {undefined}
+OMP: pid 5649 tid 3075 thread 5 bound to OS proc set {undefined}
+OMP: pid 5649 tid 6915 thread 7 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.036830709000000003,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=22 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5654 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5654 tid 2819 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.18749750000000001,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=23 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5661 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5661 tid 2819 thread 3 bound to OS proc set {undefined}
+OMP: pid 5661 tid 7171 thread 4 bound to OS proc set {undefined}
+OMP: pid 5661 tid 7427 thread 2 bound to OS proc set {undefined}
+OMP: pid 5661 tid 3587 thread 7 bound to OS proc set {undefined}
+OMP: pid 5661 tid 3331 thread 6 bound to OS proc set {undefined}
+OMP: pid 5661 tid 3075 thread 5 bound to OS proc set {undefined}
+OMP: pid 5661 tid 7683 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.039294084,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=24 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5662 tid 3075 thread 3 bound to OS proc set {undefined}
+OMP: pid 5662 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5662 tid 2819 thread 2 bound to OS proc set {undefined}
+OMP: pid 5662 tid 7683 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.037303541000000003,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=25 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5663 tid 6915 thread 3 bound to OS proc set {undefined}
+OMP: pid 5663 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5663 tid 7171 thread 2 bound to OS proc set {undefined}
+OMP: pid 5663 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.035635874999999997,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=26 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5664 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.018543332999999999,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=27 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5665 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.073959334000000002,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=28 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5666 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5666 tid 2819 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.010469917,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=29 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5667 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5667 tid 7427 thread 3 bound to OS proc set {undefined}
+OMP: pid 5667 tid 7683 thread 2 bound to OS proc set {undefined}
+OMP: pid 5667 tid 7171 thread 4 bound to OS proc set {undefined}
+OMP: pid 5667 tid 3075 thread 7 bound to OS proc set {undefined}
+OMP: pid 5667 tid 2819 thread 1 bound to OS proc set {undefined}
+OMP: pid 5667 tid 6659 thread 6 bound to OS proc set {undefined}
+OMP: pid 5667 tid 6915 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.055770667000000003,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=30 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5668 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.071315584000000001,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=31 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5669 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5669 tid 7171 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.010175541999999999,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=32 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5670 tid 7427 thread 3 bound to OS proc set {undefined}
+OMP: pid 5670 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5670 tid 2819 thread 2 bound to OS proc set {undefined}
+OMP: pid 5670 tid 7683 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.14856729199999999,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=33 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5671 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.0043188749999999998,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=34 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5672 tid 2819 thread 1 bound to OS proc set {undefined}
+OMP: pid 5672 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.042133749999999998,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=35 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5673 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.0042086670000000001,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=36 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5674 tid 7683 thread 1 bound to OS proc set {undefined}
+OMP: pid 5674 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.0095796249999999996,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=37 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5675 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5675 tid 3587 thread 4 bound to OS proc set {undefined}
+OMP: pid 5675 tid 7939 thread 3 bound to OS proc set {undefined}
+OMP: pid 5675 tid 3331 thread 2 bound to OS proc set {undefined}
+OMP: pid 5675 tid 7427 thread 7 bound to OS proc set {undefined}
+OMP: pid 5675 tid 3075 thread 1 bound to OS proc set {undefined}
+OMP: pid 5675 tid 7683 thread 6 bound to OS proc set {undefined}
+OMP: pid 5675 tid 3843 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.055017707999999999,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=38 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5676 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5676 tid 2819 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.016748458000000001,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=39 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5677 tid 7171 thread 1 bound to OS proc set {undefined}
+OMP: pid 5677 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.016836625000000001,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=40 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5678 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5678 tid 7683 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.016774875000000002,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=41 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5679 tid 3587 thread 3 bound to OS proc set {undefined}
+OMP: pid 5679 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5679 tid 3331 thread 2 bound to OS proc set {undefined}
+OMP: pid 5679 tid 3075 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.018182584000000002,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=42 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5680 tid 3075 thread 3 bound to OS proc set {undefined}
+OMP: pid 5680 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5680 tid 7683 thread 2 bound to OS proc set {undefined}
+OMP: pid 5680 tid 2819 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.019004500000000001,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=43 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5682 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5682 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5682 tid 2819 thread 4 bound to OS proc set {undefined}
+OMP: pid 5682 tid 7427 thread 2 bound to OS proc set {undefined}
+OMP: pid 5682 tid 2563 thread 1 bound to OS proc set {undefined}
+OMP: pid 5682 tid 3075 thread 6 bound to OS proc set {undefined}
+OMP: pid 5682 tid 6915 thread 5 bound to OS proc set {undefined}
+OMP: pid 5682 tid 3331 thread 7 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.041855541000000003,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=44 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5687 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5687 tid 7683 thread 4 bound to OS proc set {undefined}
+OMP: pid 5687 tid 7939 thread 3 bound to OS proc set {undefined}
+OMP: pid 5687 tid 3331 thread 2 bound to OS proc set {undefined}
+OMP: pid 5687 tid 7171 thread 7 bound to OS proc set {undefined}
+OMP: pid 5687 tid 3075 thread 1 bound to OS proc set {undefined}
+OMP: pid 5687 tid 3587 thread 6 bound to OS proc set {undefined}
+OMP: pid 5687 tid 7427 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.23040645800000001,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=45 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5717 tid 3075 thread 3 bound to OS proc set {undefined}
+OMP: pid 5717 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5717 tid 2819 thread 2 bound to OS proc set {undefined}
+OMP: pid 5717 tid 3331 thread 4 bound to OS proc set {undefined}
+OMP: pid 5717 tid 2563 thread 1 bound to OS proc set {undefined}
+OMP: pid 5717 tid 3843 thread 6 bound to OS proc set {undefined}
+OMP: pid 5717 tid 7427 thread 7 bound to OS proc set {undefined}
+OMP: pid 5717 tid 3587 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.033108499999999999,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=46 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5718 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5718 tid 2819 thread 2 bound to OS proc set {undefined}
+OMP: pid 5718 tid 7427 thread 3 bound to OS proc set {undefined}
+OMP: pid 5718 tid 7683 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.014233084,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=47 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5719 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5719 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5719 tid 2563 thread 2 bound to OS proc set {undefined}
+OMP: pid 5719 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.018270000000000002,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=48 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5720 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5720 tid 2819 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.043833957999999999,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=49 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5721 tid 6915 thread 3 bound to OS proc set {undefined}
+OMP: pid 5721 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5721 tid 7171 thread 2 bound to OS proc set {undefined}
+OMP: pid 5721 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.15226145799999999,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=50 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5722 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5722 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5722 tid 7427 thread 2 bound to OS proc set {undefined}
+OMP: pid 5722 tid 7683 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.0137695,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=51 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5723 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.276841583,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=52 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5724 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.015522792000000001,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=53 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5725 tid 7683 thread 1 bound to OS proc set {undefined}
+OMP: pid 5725 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":2,"iterations_completed":1000,"converged":null,"solve_seconds":0.042623792000000001,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=54 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5727 tid 7683 thread 3 bound to OS proc set {undefined}
+OMP: pid 5727 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5727 tid 3331 thread 4 bound to OS proc set {undefined}
+OMP: pid 5727 tid 3075 thread 2 bound to OS proc set {undefined}
+OMP: pid 5727 tid 2819 thread 1 bound to OS proc set {undefined}
+OMP: pid 5727 tid 3843 thread 6 bound to OS proc set {undefined}
+OMP: pid 5727 tid 4099 thread 7 bound to OS proc set {undefined}
+OMP: pid 5727 tid 3587 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.17599245799999999,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=55 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5734 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5734 tid 7427 thread 1 bound to OS proc set {undefined}
+OMP: pid 5734 tid 7171 thread 2 bound to OS proc set {undefined}
+OMP: pid 5734 tid 2563 thread 3 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.16141470799999999,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=56 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5738 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.28304633400000001,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=57 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5739 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5739 tid 7427 thread 4 bound to OS proc set {undefined}
+OMP: pid 5739 tid 3075 thread 3 bound to OS proc set {undefined}
+OMP: pid 5739 tid 2819 thread 2 bound to OS proc set {undefined}
+OMP: pid 5739 tid 2563 thread 1 bound to OS proc set {undefined}
+OMP: pid 5739 tid 3331 thread 6 bound to OS proc set {undefined}
+OMP: pid 5739 tid 6915 thread 7 bound to OS proc set {undefined}
+OMP: pid 5739 tid 7171 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.041489458999999999,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=58 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+OMP: pid 5740 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5740 tid 2819 thread 4 bound to OS proc set {undefined}
+OMP: pid 5740 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5740 tid 2563 thread 2 bound to OS proc set {undefined}
+OMP: pid 5740 tid 3331 thread 7 bound to OS proc set {undefined}
+OMP: pid 5740 tid 2307 thread 1 bound to OS proc set {undefined}
+OMP: pid 5740 tid 6915 thread 6 bound to OS proc set {undefined}
+OMP: pid 5740 tid 3075 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":1024,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.166863291,"max_update":null,"residual_linf":19.646664544390699,"error_linf":0.99531164946228823,"problem":"symmetric"}
+
+run=59 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5741 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.0043116250000000004,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}
+
+run=60 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5742 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.066374041999999994,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=61 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+OMP: pid 5743 tid 7427 thread 3 bound to OS proc set {undefined}
+OMP: pid 5743 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5743 tid 7683 thread 2 bound to OS proc set {undefined}
+OMP: pid 5743 tid 7939 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":512,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.040343249999999997,"max_update":null,"residual_linf":19.372334706829996,"error_linf":0.98141388314889677,"problem":"symmetric"}
+
+run=62 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5745 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5745 tid 7171 thread 4 bound to OS proc set {undefined}
+OMP: pid 5745 tid 7427 thread 2 bound to OS proc set {undefined}
+OMP: pid 5745 tid 2819 thread 3 bound to OS proc set {undefined}
+OMP: pid 5745 tid 6915 thread 7 bound to OS proc set {undefined}
+OMP: pid 5745 tid 7683 thread 1 bound to OS proc set {undefined}
+OMP: pid 5745 tid 3331 thread 6 bound to OS proc set {undefined}
+OMP: pid 5745 tid 3075 thread 5 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":8,"iterations_completed":1000,"converged":null,"solve_seconds":0.043704874999999997,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=63 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+OMP: pid 5746 tid 259 thread 0 bound to OS proc set {undefined}
+{"implementation":"openmp","N":256,"mode":"fixed","mpi_ranks":1,"omp_threads":1,"iterations_completed":1000,"converged":null,"solve_seconds":0.0180255,"max_update":null,"residual_linf":18.317437471430122,"error_linf":0.92797132649110969,"problem":"symmetric"}
+
+run=64 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+OMP: pid 5747 tid 7171 thread 3 bound to OS proc set {undefined}
+OMP: pid 5747 tid 259 thread 0 bound to OS proc set {undefined}
+OMP: pid 5747 tid 2563 thread 2 bound to OS proc set {undefined}
+OMP: pid 5747 tid 7427 thread 1 bound to OS proc set {undefined}
+{"implementation":"openmp","N":128,"mode":"fixed","mpi_ranks":1,"omp_threads":4,"iterations_completed":1000,"converged":null,"solve_seconds":0.014443208000000001,"max_update":null,"residual_linf":14.671172992813727,"error_linf":0.74323762384693104,"problem":"symmetric"}

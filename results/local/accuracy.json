@@ -1,0 +1,158 @@
+[
+  {
+    "command": [
+      "build/openmp",
+      "--n",
+      "32",
+      "--mode",
+      "converge",
+      "--tol",
+      "1e-8"
+    ],
+    "site": "local",
+    "result": {
+      "implementation": "openmp",
+      "N": 32,
+      "mode": "converge",
+      "mpi_ranks": 1,
+      "omp_threads": 1,
+      "iterations_completed": 2871,
+      "converged": true,
+      "solve_seconds": 0.001860958,
+      "max_update": 9.966234837399668e-09,
+      "residual_linf": 4.3216342227481164e-05,
+      "error_linf": 0.0007516904559699,
+      "problem": "symmetric"
+    }
+  },
+  {
+    "command": [
+      "build/openmp",
+      "--n",
+      "64",
+      "--mode",
+      "converge",
+      "--tol",
+      "1e-8"
+    ],
+    "site": "local",
+    "result": {
+      "implementation": "openmp",
+      "N": 64,
+      "mode": "converge",
+      "mpi_ranks": 1,
+      "omp_threads": 1,
+      "iterations_completed": 9987,
+      "converged": true,
+      "solve_seconds": 0.028435625,
+      "max_update": 9.994378213917798e-09,
+      "residual_linf": 0.000168707749299557,
+      "error_linf": 0.00018602731776107273,
+      "problem": "symmetric"
+    }
+  },
+  {
+    "command": [
+      "build/openmp",
+      "--n",
+      "128",
+      "--mode",
+      "converge",
+      "--tol",
+      "1e-8"
+    ],
+    "site": "local",
+    "result": {
+      "implementation": "openmp",
+      "N": 128,
+      "mode": "converge",
+      "mpi_ranks": 1,
+      "omp_threads": 1,
+      "iterations_completed": 34722,
+      "converged": true,
+      "solve_seconds": 0.453968458,
+      "max_update": 9.998699423974244e-09,
+      "residual_linf": 0.000665356070825851,
+      "error_linf": 1.5709274511666038e-05,
+      "problem": "symmetric"
+    }
+  },
+  {
+    "command": [
+      "build/openmp",
+      "--n",
+      "15",
+      "--mode",
+      "converge",
+      "--tol",
+      "1e-13"
+    ],
+    "site": "local",
+    "result": {
+      "implementation": "openmp",
+      "N": 15,
+      "mode": "converge",
+      "mpi_ranks": 1,
+      "omp_threads": 1,
+      "iterations_completed": 1341,
+      "converged": true,
+      "solve_seconds": 0.000232208,
+      "max_update": 9.85878045867139e-14,
+      "residual_linf": 9.915623877532198e-11,
+      "error_linf": 0.0032189644350435476,
+      "problem": "symmetric"
+    }
+  },
+  {
+    "command": [
+      "build/openmp",
+      "--n",
+      "31",
+      "--mode",
+      "converge",
+      "--tol",
+      "1e-13"
+    ],
+    "site": "local",
+    "result": {
+      "implementation": "openmp",
+      "N": 31,
+      "mode": "converge",
+      "mpi_ranks": 1,
+      "omp_threads": 1,
+      "iterations_completed": 5098,
+      "converged": true,
+      "solve_seconds": 0.00310925,
+      "max_update": 9.947598300641403e-14,
+      "residual_linf": 4.063096525896981e-10,
+      "error_linf": 0.000803577658793353,
+      "problem": "symmetric"
+    }
+  },
+  {
+    "command": [
+      "build/openmp",
+      "--n",
+      "63",
+      "--mode",
+      "converge",
+      "--tol",
+      "1e-13"
+    ],
+    "site": "local",
+    "result": {
+      "implementation": "openmp",
+      "N": 63,
+      "mode": "converge",
+      "mpi_ranks": 1,
+      "omp_threads": 1,
+      "iterations_completed": 19260,
+      "converged": true,
+      "solve_seconds": 0.052424834,
+      "max_update": 9.992007221626409e-14,
+      "residual_linf": 1.6387886603297375e-09,
+      "error_linf": 0.0002008217267983614,
+      "problem": "symmetric"
+    }
+  }
+]

@@ -1,0 +1,97 @@
+{
+  "run_id": "b6908026-3da5-4dae-9d1a-6749d0e675aa",
+  "site": "local",
+  "start_utc": "2026-11-09T10:00:56.560735+00:00",
+  "hostname": "Wens-MacBook-Air-4.local",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "machine": "arm64",
+  "allocated_cpus": 8,
+  "nodes": 1,
+  "arguments": {
+    "kind": "openmp",
+    "site": "local",
+    "solver": "build/openmp",
+    "serial": null,
+    "output": "results/local/openmp-m4-20261109",
+    "allocated_cpus": 8,
+    "sizes": "128,256,512,1024",
+    "threads": "1,2,4,8",
+    "configs": "1x1,2x1,4x1,8x1,4x2,2x4,1x8",
+    "iterations": 1000,
+    "repeats": 3,
+    "warmups": 1,
+    "seed": 5208,
+    "launcher_json": "[]",
+    "placement_label": "OMP_PLACES=cores; OMP_PROC_BIND=close",
+    "build_log": "build/build.log"
+  },
+  "binary_sha256": "15e861e0cbf587192a238f6a67a244e3c0d135b4df6adc8970b5564ea593bf8b",
+  "build_log": "/usr/bin/clang++  -Iinclude -O3 -std=c++17 -Wall -Wextra -Wpedantic -Xpreprocessor -fopenmp -I/opt/anaconda3/include src/openmp.cpp -L/opt/anaconda3/lib -Wl,-rpath,/opt/anaconda3/lib -lomp -o build/openmp\n/usr/bin/clang++  -Iinclude -O3 -std=c++17 -Wall -Wextra -Wpedantic -Xpreprocessor -fopenmp -I/opt/anaconda3/include tests/test_rows.cpp -L/opt/anaconda3/lib -Wl,-rpath,/opt/anaconda3/lib -lomp -o build/test_rows\n./build/test_rows\nLocal hybrid-ready row kernel passed (1,2,4,8 threads; 3 rows; nonzero halos).\npython3 tests/test_openmp.py --solver build/openmp\ntest_asymmetric_coordinates (__main__.SolverTests) ... ok\ntest_convergence_and_global_stop_decision (__main__.SolverTests) ... ok\ntest_convergence_sizes (__main__.SolverTests) ... ok\ntest_fixed_eigenmode (__main__.SolverTests) ... ok\ntest_help (__main__.SolverTests) ... ok\ntest_initialization (__main__.SolverTests) ... ok\ntest_invalid_cli (__main__.SolverTests) ... ok\ntest_manual_one_point (__main__.SolverTests) ... ok\ntest_metrics_independently (__main__.SolverTests) ... ok\ntest_nonconvergence (__main__.SolverTests) ... ok\ntest_output_failure (__main__.SolverTests) ... ok\ntest_scalar_equivalence (__main__.SolverTests) ... ok\ntest_second_order_accuracy (__main__.SolverTests) ... ok\n\n----------------------------------------------------------------------\nRan 13 tests in 1.196s\n\nOK\n",
+  "git_head": {
+    "command": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "returncode": 0,
+    "stdout": "0a71670e9af6f42de72251ebb7f6f0473de1a12e\n",
+    "stderr": ""
+  },
+  "git_status": {
+    "command": [
+      "git",
+      "status",
+      "--porcelain"
+    ],
+    "returncode": 0,
+    "stdout": " M README.md\n?? .gitignore\n?? Makefile\n?? include/\n?? report/\n?? scripts/\n?? src/\n?? tests/\n",
+    "stderr": ""
+  },
+  "source_sha256": {
+    "src/openmp.cpp": "76554f49e5fdb66f11f269a37c43cd11ccc9104e020a4b4ec69bf0eb08914174",
+    "include/openmp_rows.hpp": "43c55290b767632e9c291b012fba77bf14b7376a49af2ec993686a83e8f0cbf7",
+    "include/poisson.hpp": "3a62c54729f9ed6531795a604563837d08dc20b93081f5518fffd9f2cfab88bb",
+    "scripts/analyze.py": "80eb4a52548b4fcec854cba0f6e553c46843bb36432681bfeda62ac89f365c67",
+    "scripts/benchmark.py": "5e8537d722ce3e911e7b1462596f8c6047b3dcaf3cdf121ad2aa73b1949c20aa",
+    "scripts/benchmark_hybrid.sh": "c4d0b6067a245f9b36a79757f2397240b7da566b12f5ca590bc2310d6b295160",
+    "scripts/benchmark_openmp.sh": "4fd5b9964677a2c0ea5ca90a3806105a307c716b840991b35ef8e1ac05236390",
+    "scripts/build_local.sh": "b25843be3b55313c6c6f70ca90563cc855a4c2d29bf3e33c0b69c4fde2225f08",
+    "scripts/discover_environment.sh": "310085409b8458d31b80b72ab037bbe5c85993ad5a768b611a812f0d2119d4e5",
+    "scripts/run_vanda_job.sh": "5600cbe7ed0912dda61fe2542e702be7c1207ab0b5a20974fb04f05f5b939acc",
+    "scripts/submit_vanda.sh": "3295658386a5fe52a565ffc37012f61a233d9320c41cea3d61d050eddcce36fc",
+    "scripts/vanda-env.example.sh": "3915eac01be71d75b49cf9b85a7aced62d59a8ae7c8929084f4017b6f40e46b7",
+    "tests/compare_solvers.py": "de7a5544771bc450434e6dad109b96773c2b0797d775a982bbcb925a2fe78990",
+    "tests/test_openmp.py": "b1c8f01e1927cc314a6a1a929c8dfa703d6a56b340a9f9e18f168d24a2cb9e00",
+    "tests/test_rows.cpp": "ca174a8c938af6fd39525aceff9ed5ecca633b07d524e78ad336b66304a19023"
+  },
+  "environment": {},
+  "placement_requested": "OMP_PLACES=cores; OMP_PROC_BIND=close",
+  "hardware": {
+    "command": [
+      "/usr/sbin/system_profiler",
+      "SPHardwareDataType"
+    ],
+    "returncode": 0,
+    "stdout": "Hardware:\n\n    Hardware Overview:\n\n      Model Name: MacBook Air\n      Model Identifier: Mac16,12\n      Model Number: MW103ZP/A\n      Chip: Apple M4\n      Total Number of Cores: 10 (4 Performance and 6 Efficiency)\n      Memory: 16 GB\n      System Firmware Version: 18000.161.10\n      OS Loader Version: 18000.161.10\n",
+    "stderr": "2026-11-09 18:00:56.718 system_profiler[5595:36253497] Error fetching hw.cpufamily: -1\n"
+  },
+  "mpi_version": {
+    "command": [
+      "mpirun",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "HYDRA build details:\n    Version:                                 4.3.2\n    Release Date:                            Mon Oct  6 11:14:20 AM CDT 2025\n    CC:                              arm64-apple-darwin20.0.0-clang -I/opt/anaconda3/include  -mmacosx-version-min=12.1 -I/opt/anaconda3/include -ftree-vectorize -fPIC -fstack-protector-strong -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix -L/opt/anaconda3/lib -Wl,-rpath,/opt/anaconda3/lib -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-rpath,/opt/anaconda3/lib -L/opt/anaconda3/lib  \n    Configure options:                       '--disable-option-checking' '--prefix=/opt/anaconda3' '--with-hwloc=embedded' '--disable-dependency-tracking' '--disable-libxml2' '--enable-romio' '--enable-shared' '--enable-cxx' '--enable-fortran' '--disable-wrapper-rpath' 'build_alias=arm64-apple-darwin20.0.0' 'host_alias=arm64-apple-darwin20.0.0' 'MPICHLIB_CFLAGS=-ftree-vectorize -fPIC -fstack-protector-strong -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix' 'MPICHLIB_CPPFLAGS= -mmacosx-version-min=12.1' 'MPICHLIB_CXXFLAGS=-ftree-vectorize -fPIC -fstack-protector-strong -O2 -pipe -stdlib=libc++ -fvisibility-inlines-hidden -fmessage-length=0 -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix' 'MPICHLIB_FFLAGS=-march=armv8.3-a -ftree-vectorize -fPIC -fno-stack-protector -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix' 'MPICHLIB_FCFLAGS=-march=armv8.3-a -ftree-vectorize -fPIC -fno-stack-protector -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix' 'MPICHLIB_LDFLAGS=-Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-rpath,/opt/anaconda3/lib -L/opt/anaconda3/lib' 'CC=arm64-apple-darwin20.0.0-clang' 'CFLAGS=-I/opt/anaconda3/include -ftree-vectorize -fPIC -fstack-protector-strong -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix -fno-common -O2' 'LDFLAGS=-L/opt/anaconda3/lib -Wl,-rpath,/opt/anaconda3/lib -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-rpath,/opt/anaconda3/lib -L/opt/anaconda3/lib -framework Foundation -framework IOKit' 'CPPFLAGS=-I/opt/anaconda3/include -mmacosx-version-min=12.1 -DNETMOD_INLINE=__netmod_inline_ofi__ -DPOSIX_EAGER_INLINE=__posix_eager_inline_iqueue__ -I/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work/src/mpl/include -I/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work/modules/json-c -I/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work/modules/hwloc/include -D_REENTRANT -I/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work/src/mpi/romio/include -I/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work/src/pmi/include -I/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work/modules/yaksa/src/frontend/include -I/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work/modules/libfabric/include' 'CXX=arm64-apple-darwin20.0.0-clang++' 'CXXFLAGS=-I/opt/anaconda3/include -ftree-vectorize -fPIC -fstack-protector-strong -O2 -pipe -stdlib=libc++ -fvisibility-inlines-hidden -fmessage-length=0 -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix -O2' 'FC=arm64-apple-darwin20.0.0-gfortran' 'FCFLAGS=-I/opt/anaconda3/include -fallow-argument-mismatch -march=armv8.3-a -ftree-vectorize -fPIC -fno-stack-protector -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix -O2' 'FFLAGS=-I/opt/anaconda3/include -fallow-argument-mismatch -march=armv8.3-a -ftree-vectorize -fPIC -fno-stack-protector -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix -O2' '--cache-file=/dev/null' '--srcdir=.' 'LIBS= '\n    Process Manager:                         pmi\n    Launchers available:                     ssh rsh fork slurm ll lsf sge manual persist\n    Topology libraries available:            hwloc\n    Resource management kernels available:   user slurm ll lsf sge pbs cobalt\n    Demux engines available:                 poll select\n",
+    "stderr": ""
+  },
+  "compiler_version": {
+    "command": [
+      "/usr/bin/clang++",
+      "--version"
+    ],
+    "returncode": 0,
+    "stdout": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+    "stderr": "",
+    "recorded_after_benchmark": true
+  }
+}

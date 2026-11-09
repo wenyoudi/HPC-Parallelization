@@ -1,0 +1,18 @@
+test_asymmetric_coordinates (__main__.SolverTests) ... ok
+test_convergence_and_global_stop_decision (__main__.SolverTests) ... ok
+test_convergence_sizes (__main__.SolverTests) ... ok
+test_fixed_eigenmode (__main__.SolverTests) ... ok
+test_help (__main__.SolverTests) ... ok
+test_initialization (__main__.SolverTests) ... ok
+test_invalid_cli (__main__.SolverTests) ... ok
+test_manual_one_point (__main__.SolverTests) ... ok
+test_metrics_independently (__main__.SolverTests) ... ok
+test_nonconvergence (__main__.SolverTests) ... ok
+test_output_failure (__main__.SolverTests) ... ok
+test_scalar_equivalence (__main__.SolverTests) ... ok
+test_second_order_accuracy (__main__.SolverTests) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 8.200s
+
+OK

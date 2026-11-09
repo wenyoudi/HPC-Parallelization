@@ -1,0 +1,128 @@
+
+run=1 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=2 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=3 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=4 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=5 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=6 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=7 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=8 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=9 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=10 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=11 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=12 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=13 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=14 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=15 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=16 warmup=True repeat=0 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=17 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=18 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=19 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=20 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=21 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=22 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=23 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=24 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=25 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=26 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=27 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=28 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=29 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=30 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=31 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=32 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=33 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=34 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=35 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=36 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=37 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=38 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=39 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=40 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=41 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=42 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=43 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=44 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=45 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=46 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=47 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=48 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=49 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=50 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=51 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=52 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=53 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=54 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=55 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=56 warmup=False repeat=3 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=57 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=58 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 1024 --mode fixed --iterations 1000
+
+run=59 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
+
+run=60 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=61 warmup=False repeat=2 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 512 --mode fixed --iterations 1000
+
+run=62 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=63 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 256 --mode fixed --iterations 1000
+
+run=64 warmup=False repeat=1 cmd='/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization/build/openmp' --n 128 --mode fixed --iterations 1000
