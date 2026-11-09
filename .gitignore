@@ -1,0 +1,11 @@
+/build/
+__pycache__/
+*.pyc
+.DS_Store
+/results/runs/
+/results/vanda/
+/report/generated/
+*.o
+*.out
+*.err
+/scripts/vanda-env.local.sh
