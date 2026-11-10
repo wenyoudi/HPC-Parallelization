@@ -33,5 +33,8 @@ export LDLIBS=''
 export OMP_DYNAMIC=FALSE OMP_PLACES=cores OMP_PROC_BIND=close
 # Validation parses JSON directly. Benchmark subprocesses enable affinity reports.
 export OMP_DISPLAY_AFFINITY=FALSE OMP_NUM_THREADS=8
+# The single-node TM workaround was verified by the user in job 1536986.
+# The original scheduler/hostfile launch remains selectable with "pbs".
+export VANDA_MPI_LAUNCHER=${VANDA_MPI_LAUNCHER:-single-node}
 MPI_LAUNCHER_JSON='["mpirun","--np","{ranks}","--map-by","slot:PE={threads}","--bind-to","core","--nooversubscribe","--report-bindings"]'
 MPI_PLACEMENT_LABEL='OpenMPI 4.1.4: slot:PE=threads, bind-to core, nooversubscribe; OMP_PLACES=cores, OMP_PROC_BIND=close'

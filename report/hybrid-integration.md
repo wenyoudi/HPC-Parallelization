@@ -2,6 +2,10 @@
 
 ## Dependency and status
 
+Current update: user-confirmed MPI communication smoke job 1536986 passed on GN-A40-074 at 1/2/4 ranks with the single-node TM workaround. This is not Poisson or hybrid validation. Member A's serial source is available at commit `0e20822` and pinned verbatim under `references/serial/`; Member B's MPI source is still unavailable, confirmed by the user. Do not recreate their framework.
+
+Prepared infrastructure now includes `scripts/mpi_launcher.py` (actual-PBS slots and rank/thread checks; `single-node` and original `pbs` modes), `scripts/validate_distributed.py`, a gated hybrid benchmark, and future PBS job kinds `mpi-validate`/`hybrid-validate`/`hybrid`. The actual CMake integration hook remains absent deliberately; see `cmake/README.md`. Actual integration and cluster numerical tests are pending. Existing OpenMP source/results and the upstream serial baseline are preserved.
+
 On 9 November the local repository and remote `main` contained only a README. No MPI implementation or other remote branch existed. This branch therefore supplies the OpenMP solver and reusable local kernels, **not a competing MPI framework**. There is no `src/hybrid.cpp` executable yet. `make hybrid` deliberately fails with a dependency message; benchmark scripts refuse a missing binary.
 
 Member B must provide:

@@ -18,6 +18,57 @@ On 10 November the agent's network-enabled SSH probe reached Vanda but could not
 
 Preparation checks performed locally: CMake 3.24.3 configured and built Release targets; both CTest entries passed (the local-row check and 13 numerical groups). The MPI smoke source compiled against the local MPI installation without being launched. Three allocation-fixture tests and two data-pipeline groups passed; shell/Python syntax checks passed. These results do not claim GCC 11.3/Open MPI 4.1.4 execution on Vanda.
 
+## Verified single-node launch workaround and pending solver integration
+
+The user reports that **PBS job 1536986 completed on GN-A40-074 with Exit_status 0** using 1, 2 and 4 ranks. `MPI_Init_thread`, `MPI_Allreduce` and `MPI_Sendrecv` passed with this single-node command pattern:
+
+```bash
+mpirun --mca plm rsh --mca ras ^tm --host "$(hostname):4" -np 4 PROGRAM
+```
+
+This is communication/environment evidence, **not MPI Poisson or hybrid numerical validation**, and does not establish an 8-rank or bound-thread result. The returned smoke logs have not been inspected here. Person B's MPI source is not yet available, as confirmed by the user. Do not recreate it: actual halo exchange, distributed residual/gather, FUNNELED call discipline and hybrid integration remain pending that source.
+
+`scripts/mpi_launcher.py` makes the workaround the default `single-node` mode. It uses the current verified compute hostname and **`Resource_List.ncpus` from `qstat -f`** as `--host HOST:SLOTS`, rather than hard-coding 4 or using the host's total CPU count. It checks `ranks*threads` against that allocation, the process cpuset, and visible physical cores when Linux topology is available. It adds explicit `--map-by slot:PE=THREADS --bind-to core --nooversubscribe --report-bindings`. These binding settings need their own successful Vanda evidence. Only one allocated compute node is supported; this is not a multinode workaround.
+
+The previous scheduler/hostfile launch remains available as `VANDA_MPI_LAUNCHER=pbs`. Launcher selection is saved in the PBS script and propagated to each smoke, validation and benchmark process; failed launches are not silently retried with a different mode. Smoke `plan.json` records executed and allocation-excluded rank counts.
+
+In your existing isolated Vanda feature checkout:
+
+```bash
+git status --short
+git pull --ff-only origin feature/openmp-hybrid
+bash -l "$PWD/scripts/setup_vanda.sh"
+# Reproduce the four-CPU single-node setting, with additional binding checks:
+VANDA_CPUS=4 VANDA_MPI_LAUNCHER=single-node \
+  bash -l "$PWD/scripts/submit_vanda.sh" mpi-smoke
+# Alternative: original PBS/hostfile launcher, only if you want to test it:
+# VANDA_CPUS=4 VANDA_MPI_LAUNCHER=pbs bash -l "$PWD/scripts/submit_vanda.sh" mpi-smoke
+# Independent serial/OpenMP comparisons; writes a new job directory:
+bash -l "$PWD/scripts/submit_vanda.sh" serial-compare
+```
+
+`VANDA_CPUS` sets the requested PBS allocation, while actual runtime slots always come from PBS. OpenMP/serial comparison jobs still require at least eight CPUs for the existing 1/2/4/8-thread tests. MPI smoke supports smaller allocations and records exclusions (for example rank 8 on a four-CPU job). Check each new `status.json`, `mpi-smoke/plan.json`, `results.jsonl` and binding logs. Previous OpenMP result directories and numerical solver code are untouched.
+
+### Serial reference and prepared hybrid workflow
+
+Person A's unmodified serial implementation is pinned from `serial-baseline-and-validation` commit `0e20822ffda1d0493a1f1564438fbe8f58d0b1a2` under `references/serial/`, with file hashes in `UPSTREAM.json`. It is compiled separately with the same C++17 Release compiler/flags; its branch/source are not edited. `serial-compare` runs its existing tests and compares its full numerical grid with the existing OpenMP solver for both problems, fixed/convergence modes and 1/2/4/8 threads. The tool handles `n` versus `N` and passes only options appropriate to each mode. Local CMake/CTest checks and all 16 serial/OpenMP comparison cases passed; this does not replace the new Vanda comparison job.
+
+**Before Member B's source arrives:** `mpi-validate`, `hybrid-validate` and `hybrid` reject submission with a dependency message. The required build adapter is documented in `cmake/README.md`; there is deliberately no stub `DistributedSolvers.cmake` or replacement MPI solver. Once actual integration defines real `mpi` and `hybrid` targets, these prepared commands apply:
+
+```bash
+# Pending actual source integration; not runnable yet:
+bash -l "$PWD/scripts/submit_vanda.sh" mpi-validate
+bash -l "$PWD/scripts/submit_vanda.sh" hybrid-validate
+# Only after correctness succeeds:
+bash -l "$PWD/scripts/submit_vanda.sh" hybrid
+```
+
+The prepared jobs build serial/MPI/hybrid in the same fresh job directory, run CTest and binding/communication smoke, then use `scripts/validate_distributed.py`. It compares pointwise solutions, iteration counts, convergence/update values, boundaries, final residual and analytical error against serial with atol=1e-10/rtol=1e-8. Cases include N=10/ranks=3, N=ranks, first/last ranks, positive odd/even fixed counts 1/2/31, convergence and the asymmetric problem. Rank/thread cases exceeding the actual allocation are explicitly recorded as not run. Member B's source must also be inspected for final-halo refresh, global reductions, safe nonuniform gather and proper main-thread-only FUNNELED MPI calls; the numerical evidence alone does not prove call discipline.
+
+The hybrid benchmark is gated on successful numerical evidence for **the exact serial/hybrid binary hashes, selected launch mode and every benchmark rank/thread configuration**. It reruns validation in the benchmark allocation before any timing. Its fixed-K matrix includes strong-scaling configurations and 8x1/4x2/2x4/1x8, with one warm-up and three recorded repetitions per grid/configuration. Every launch checks the actual PBS core budget. The true serial baseline is rerun on that same node/allocation with the same N/K/problem/build flags and bound through a one-rank/one-core launch; MPI startup stays outside the solver's internal `solve_seconds`. Raw serial samples are retained with the hybrid samples for median serial-baseline speedup/efficiency. Hybrid OpenMP affinity diagnostics are enabled in excluded warm-ups and disabled in measured solves, so first-team diagnostic printing cannot contaminate the iteration timer; MPI binding reports remain saved for every launch.
+
+Person A's serial code forms h²*f inside each update; the existing OpenMP code pre-scales RHS before timing. Preserve both existing implementations/results, and align/document MPI/hybrid arithmetic with the serial baseline during actual integration before publishing speedups. No hybrid runtime, numerical pass or efficiency result is currently claimed.
+
 ## First submission failures and fixes
 
 The user reported two distinct outcomes; neither is a passing Vanda numerical/MPI test:
@@ -139,9 +190,9 @@ cat "$mpi_dir/mpi-smoke/results.jsonl"
 qstat -xf "$mpi_id" | sed -n '/job_state =/p; /Exit_status =/p'
 ```
 
-The job requests **one shared node allocation, 8 CPUs, 8 MPI slots, ompthreads=1, 4 GB, 30 minutes**. CMake finds MPI through the verified Open MPI module and builds `tests/mpi_smoke.cpp` from the submitted snapshot. The launcher runs 1/2/4/8 ranks using the PBS node file with explicit `--map-by slot:PE=1 --bind-to core --nooversubscribe --report-bindings`, following the [Open MPI 4.1 launcher documentation](https://www.open-mpi.org/doc/v4.1/man1/mpirun.1.php). It checks MPI_THREAD_FUNNELED support on every rank, collective sum, a neighbor ring, expected rank count, execution on the allocated single node and non-overlapping Linux affinity masks. A rank bound to a physical core may include both SMT siblings in its CPU mask.
+The job requests **one shared node allocation, 8 CPUs, 8 MPI slots, ompthreads=1, 4 GB, 30 minutes**. CMake finds MPI through the verified Open MPI module and builds `tests/mpi_smoke.cpp` from the submitted snapshot. The original `pbs` mode runs the fitting 1/2/4/8-rank cases using the PBS node file with explicit `--map-by slot:PE=1 --bind-to core --nooversubscribe --report-bindings`, following the [Open MPI 4.1 launcher documentation](https://www.open-mpi.org/doc/v4.1/man1/mpirun.1.php). It checks MPI_THREAD_FUNNELED support on every rank, collective sum, a neighbor ring, expected rank count, execution on the allocated single node and non-overlapping Linux affinity masks. A rank bound to a physical core may include both SMT siblings in its CPU mask.
 
-Require four `success:true` records in `mpi-smoke/results.jsonl`, plus the overall successful job status. Per-rank host/CPU records and launcher stderr are retained for every rank count. This proves only single-node process launch/basic communication/thread support/binding; it does not validate Poisson decomposition, inter-node communication, halo exchange or hybrid numerical correctness. `submit_vanda.sh hybrid` remains blocked until Member B's code arrives.
+Require one `success:true` record for each executed rank count listed in `mpi-smoke/plan.json`, plus the overall successful job status. Excluded rank counts are not passes. Per-rank host/CPU records and launcher stderr are retained for every rank count. This proves only single-node process launch/basic communication/thread support/binding; it does not validate Poisson decomposition, inter-node communication, halo exchange or hybrid numerical correctness. `submit_vanda.sh hybrid` remains blocked until Member B's code and the actual build adapter arrive.
 
 If the queue requires a project or queue selection, append the **actual values** to any submission command, for example `... openmp -q QUEUE -P PROJECT`. No queue/account name is invented. Requested defaults are in each generated `job.pbs`; if PBS rejects the memory/exclusive-node policy, return its exact error for adjustment. Never execute `run_vanda_job.sh`, `mpirun` or the benchmark directly on a login node.
 

@@ -4,6 +4,8 @@ DSA5208 Project 3: 2D Poisson equation, five-point finite differences and Jacobi
 
 Member A owns the production serial solver, common validation and final PDF; Member B owns MPI decomposition/communication. This branch adds the OpenMP contribution. Neither teammate's implementation was present in the repository or remote branches inspected on 9 November. Hybrid **integration is pending**, with the reusable local computation prepared in `include/openmp_rows.hpp` and the exact handoff in [report/hybrid-integration.md](report/hybrid-integration.md).
 
+Update: Member A's serial baseline is now pinned verbatim under `references/serial/` from commit `0e20822`, in an isolated build/include directory. Member B's source remains unavailable, confirmed by the user. No MPI Poisson solver or hybrid replacement is created here. Existing OpenMP source and benchmark artifacts remain unchanged.
+
 ## Build and run
 
 Requires C++17 and an OpenMP compiler/runtime. On a verified GNU/Linux compiler:
@@ -48,6 +50,16 @@ Submission records Git commit/status on the login node and archives the clean co
 Each PBS job requests eight CPUs on one node and builds under its own `results/vanda/job-*/build/`; no other checkout/build directory is cleaned. Validation and MPI smoke default to `place=shared`; performance benchmarks retain `place=excl` by default. `VANDA_PLACEMENT=shared` or `excl` explicitly overrides placement at submission. The validation hold reported for job 1535954 has no confirmed cause; shared placement is a smaller request, not a diagnosed fix. OpenMP jobs use one MPI slot and eight OpenMP threads; MPI smoke uses eight slots and one thread. Benchmark configurations are 1/2/4/8 threads, N=128/256/512/1024, fixed K=1000, one warm-up and three recorded repetitions (48 measured rows). Actual normalized allocation, binding reports, compiler/hardware metadata and login-node provenance are retained. The smoke test checks 1/2/4/8-rank launch, FUNNELED support, collective/ring communication and disjoint bindings; it does not implement MPI Poisson.
 
 See [the updated runbook](report/vanda-runbook.md) for exact status, result retrieval and plotting commands. The agent can reach Vanda but cannot use the authenticated SSH session, so these jobs must currently be submitted manually. Live CPU hardware and measurements will come from returned compute-node evidence.
+
+The user has now verified single-node MPI communication at 1/2/4 ranks in Vanda job **1536986**, on GN-A40-074, exit 0. The default launcher supports that `--mca plm rsh --mca ras ^tm --host HOST:SLOTS` workaround, deriving slots from actual PBS `ncpus`. Set `VANDA_MPI_LAUNCHER=pbs` to retain the original scheduler/hostfile alternative. `VANDA_CPUS=4` requests a four-CPU smoke allocation; fitting rank counts and exclusions are recorded. Explicit PE/core binding is included and needs its own Vanda evidence. Every controlled MPI/hybrid launch rejects `ranks × threads` above the PBS/cpuset/physical-core limit.
+
+```bash
+# In the existing isolated Vanda checkout after pulling this branch:
+VANDA_CPUS=4 VANDA_MPI_LAUNCHER=single-node bash -l "$PWD/scripts/submit_vanda.sh" mpi-smoke
+bash -l "$PWD/scripts/submit_vanda.sh" serial-compare
+```
+
+`serial-compare` builds/tests the pinned serial reference and compares full grids with OpenMP without altering old results. `mpi-validate`, `hybrid-validate`, and `hybrid` jobs are prepared but refuse submission until real targets are integrated through [cmake/README.md](cmake/README.md). Distributed validation covers halo-sensitive final metrics, nonuniform N=10/ranks=3, N=ranks, both problems and fixed/convergence modes against serial. Hybrid benchmarking requires successful evidence matching the exact binaries, launch mode and all configurations; serial baselines are measured in the same allocation with explicit one-core binding. No MPI Poisson/hybrid numerical validation or hybrid timing is claimed yet.
 
 ## Numerical and output contract
 

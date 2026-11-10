@@ -37,7 +37,8 @@ class SubmissionTests(unittest.TestCase):
             (root/".vanda-openmp-workspace").write_text(str(root.resolve())+"\n")
             jobs = []
             for kind, placement, slots, threads in [("openmp-validate","shared",1,8),
-                                                     ("mpi-smoke","shared",8,1),("openmp","excl",1,8)]:
+                                                     ("mpi-smoke","shared",8,1),("openmp","excl",1,8),
+                                                     ("serial-compare","shared",1,8)]:
                 env = dict(os.environ)
                 env.pop("VANDA_PLACEMENT",None)
                 subprocess.run(["bash","scripts/submit_vanda.sh",kind],cwd=root,env=env,
@@ -52,6 +53,22 @@ class SubmissionTests(unittest.TestCase):
                 self.assertEqual((out/"source-commit.txt").read_text(),commit)
                 self.assertEqual((out/"source-status.txt").read_text(),"")
                 jobs.append(out)
+            # Four-CPU smoke allocations carry the selected launch mode to the
+            # compute job. Runtime host slots still come from qstat, not this input.
+            env=dict(os.environ,VANDA_CPUS="4",VANDA_MPI_LAUNCHER="pbs")
+            subprocess.run(["bash","scripts/submit_vanda.sh","mpi-smoke"],cwd=root,env=env,
+                           capture_output=True,text=True,check=True)
+            out=root/(root/"results/vanda/latest-mpi-smoke.txt").read_text().strip()
+            body=(out/"job.pbs").read_text()
+            self.assertIn("ncpus=4:mpiprocs=4:ompthreads=1",body)
+            self.assertIn("export VANDA_MPI_LAUNCHER=pbs",body)
+            jobs.append(out)
+            for kind in ["mpi-validate","hybrid-validate","hybrid"]:
+                blocked=subprocess.run(["bash","scripts/submit_vanda.sh",kind],cwd=root,env=dict(env,VANDA_CPUS="8"),
+                                       capture_output=True,text=True)
+                self.assertNotEqual(blocked.returncode,0)
+                self.assertIn("integration is pending",blocked.stderr)
+                self.assertFalse((root/f"results/vanda/latest-{kind}.txt").exists())
             # A subsequent working-tree edit cannot change an already submitted snapshot.
             (root/"source.txt").write_text("later edit\n")
             for out in jobs:

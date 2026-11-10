@@ -23,6 +23,23 @@ add_test(NAME openmp_numerical COMMAND ${Python3_EXECUTABLE}
 set_tests_properties(local_rows openmp_numerical PROPERTIES
     ENVIRONMENT "OMP_DYNAMIC=FALSE;OMP_DISPLAY_AFFINITY=FALSE" TIMEOUT 300)
 
+option(BUILD_SERIAL_REFERENCE "Build the pinned, unmodified Member A reference" OFF)
+if(BUILD_SERIAL_REFERENCE)
+    add_subdirectory(references/serial)
+endif()
+
+option(BUILD_DISTRIBUTED_SOLVERS "Build Member B MPI and the real hybrid integration" OFF)
+if(BUILD_DISTRIBUTED_SOLVERS)
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cmake/DistributedSolvers.cmake")
+        message(FATAL_ERROR "Member B integration missing: see cmake/README.md; no MPI/hybrid solver is supplied yet")
+    endif()
+    find_package(MPI REQUIRED COMPONENTS CXX)
+    include(cmake/DistributedSolvers.cmake)
+    if(NOT TARGET mpi)
+        message(FATAL_ERROR "DistributedSolvers.cmake must define the real mpi executable target")
+    endif()
+endif()
+
 option(BUILD_MPI_SMOKE "Build MPI launch/thread-support smoke test (not an MPI solver)" OFF)
 if(BUILD_MPI_SMOKE)
     find_package(MPI REQUIRED COMPONENTS CXX)

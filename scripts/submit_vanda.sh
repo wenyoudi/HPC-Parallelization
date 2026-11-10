@@ -2,18 +2,25 @@
 # Only generates/submits jobs here; compilation and tests run inside PBS.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-kind=${1:?Use openmp-validate, openmp, mpi-smoke or hybrid}
+kind=${1:?Use openmp-validate, openmp, mpi-smoke, serial-compare, mpi-validate, hybrid-validate or hybrid}
 shift
-case "$kind" in openmp-validate|openmp|mpi-smoke|hybrid) ;; *) echo 'Unknown job kind.' >&2; exit 1;; esac
+case "$kind" in openmp-validate|openmp|mpi-smoke|serial-compare|mpi-validate|hybrid-validate|hybrid) ;; *) echo 'Unknown job kind.' >&2; exit 1;; esac
 [[ -f .vanda-openmp-workspace && $(cat .vanda-openmp-workspace) == "$(pwd -P)" ]] || {
     echo 'Use the separate clone and run bash scripts/setup_vanda.sh first.' >&2; exit 1;
 }
 [[ $(git branch --show-current) == feature/openmp-hybrid ]] || exit 1
 source scripts/vanda-env.sh
-if [[ "$kind" == hybrid ]]; then
-    echo 'Hybrid integration still awaits Member B; run mpi-smoke first.' >&2
-    exit 1
-fi
+cpus=${VANDA_CPUS:-8}
+[[ "$cpus" =~ ^[1-9][0-9]*$ ]] || { echo 'VANDA_CPUS must be positive.' >&2; exit 1; }
+[[ "$kind" == mpi-smoke || "$cpus" -ge 8 ]] || { echo 'Existing OpenMP tests require at least 8 CPUs.' >&2; exit 1; }
+launcher_mode=${VANDA_MPI_LAUNCHER:-single-node}
+case "$launcher_mode" in single-node|pbs) ;; *) echo 'VANDA_MPI_LAUNCHER must be single-node or pbs.' >&2; exit 1;; esac
+case "$kind" in mpi-validate|hybrid-validate|hybrid)
+    test -f cmake/DistributedSolvers.cmake || {
+        echo 'Member B MPI/hybrid source integration is pending; see cmake/README.md. No job submitted.' >&2
+        exit 1
+    };;
+esac
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
 jobdir="results/vanda/job-${kind}-${stamp}-$$"
 mkdir -p "$jobdir"
@@ -39,20 +46,23 @@ data=dict(recorded_on="login_node", hostname=socket.gethostname(),
 PROVENANCE_PY
 job="$jobdir/job.pbs"
 slots=1
-ompthreads=8
+ompthreads=$cpus
 jobname=p3-omp-bench
 [[ "$kind" != openmp-validate ]] || jobname=p3-omp-check
 [[ "$kind" != mpi-smoke ]] || jobname=p3-mpi-smoke
-[[ "$kind" != mpi-smoke ]] || { slots=8; ompthreads=1; }
+[[ "$kind" != serial-compare ]] || jobname=p3-serial-cmp
+[[ "$kind" != mpi-smoke ]] || { slots=$cpus; ompthreads=1; }
+case "$kind" in mpi-validate|hybrid-validate|hybrid) slots=$cpus; ompthreads=1; jobname=p3-${kind};; esac
+[[ "$kind" != hybrid-validate ]] || jobname=p3-hyb-check
 placement=${VANDA_PLACEMENT:-shared}
-[[ "$kind" != openmp || -n ${VANDA_PLACEMENT:-} ]] || placement=excl
+[[ ( "$kind" != openmp && "$kind" != hybrid ) || -n ${VANDA_PLACEMENT:-} ]] || placement=excl
 case "$placement" in shared|excl) ;; *) echo 'VANDA_PLACEMENT must be shared or excl.' >&2; exit 1;; esac
 # Pin the job to this isolated checkout, regardless of qsub's working directory.
 printf -v quoted_jobdir '%q' "$(pwd -P)/$jobdir"
 cat > "$job" <<EOF
 #!/bin/bash -l
 #PBS -N ${jobname}
-#PBS -l select=1:ncpus=8:mpiprocs=${slots}:ompthreads=${ompthreads}:mem=4gb
+#PBS -l select=1:ncpus=${cpus}:mpiprocs=${slots}:ompthreads=${ompthreads}:mem=4gb
 #PBS -l place=${placement}
 #PBS -l walltime=00:30:00
 #PBS -j oe
@@ -68,6 +78,8 @@ VERIFY_PY
 mkdir source
 tar -xzf source.tar.gz -C source
 export BENCH_KIND=${kind}
+export VANDA_CPUS=${cpus}
+export VANDA_MPI_LAUNCHER=${launcher_mode}
 export VANDA_JOB_DIR=${quoted_jobdir}
 source source/scripts/run_vanda_job.sh
 EOF

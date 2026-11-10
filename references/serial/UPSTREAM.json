@@ -1,0 +1,13 @@
+{
+  "repository": "https://github.com/wenyoudi/HPC-Parallelization",
+  "branch": "serial-baseline-and-validation",
+  "commit": "0e20822ffda1d0493a1f1564438fbe8f58d0b1a2",
+  "files_sha256": {
+    "CMakeLists.txt": "3293177a0d07100968161a4a1f52b34735ce415d861452dc1f00f77d84a381d4",
+    "include/poisson.hpp": "b43c8fea3bdd816af3513c070dd59051226cffabf34e6693bba11abfeb925f27",
+    "src/poisson.cpp": "93407c4565d271b7fe6c1ac534ffbaa07817910816c78ee020bb665cebdef854",
+    "src/serial_main.cpp": "3bc0b083b692bc8137f044782efca4fa4d34d515b4c4b7f06e3942447d60c891",
+    "tests/test_serial.py": "2449fc055e2f8b45d248b7bf4428e7ed2c47be2a7d695aeb9597be88e7f4414c",
+    "docs/implementation_contract.md": "cc01ccf10659dc2504aa54e058f974d8fe15fa738ba39fb6af94dfe1ba58a8a9"
+  }
+}

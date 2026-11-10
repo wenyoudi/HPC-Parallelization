@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import uuid
 from pbs_allocation import inspect_allocation
+from mpi_launcher import MODES, launcher as pbs_launcher
 
 
 def capture(cmd):
@@ -40,10 +41,12 @@ def main():
     p.add_argument("--warmups", type=int, default=1)
     p.add_argument("--seed", type=int, default=5208)
     p.add_argument("--launcher-json", default="[]", help="Array of launcher args; {ranks}/{threads} substituted")
+    p.add_argument("--launcher-mode", choices=MODES, help="Vanda MPI launch mode (default: single-node workaround)")
     p.add_argument("--placement-label", default="OMP_PLACES=cores; OMP_PROC_BIND=close")
     p.add_argument("--build-log", type=Path, default=Path("build/build.log"))
     p.add_argument("--compiler", default=os.environ.get("CXX", "c++"), help="Compiler command whose version is recorded")
     p.add_argument("--source-provenance", type=Path, help="Login-node Git provenance for the submitted source snapshot")
+    p.add_argument("--validation-evidence", type=Path, help="Successful distributed validation for these exact binaries")
     args = p.parse_args()
     sizes = [int(x) for x in args.sizes.split(",")]
     configs = ([(1, int(x)) for x in args.threads.split(",")] if args.kind == "openmp"
@@ -51,7 +54,9 @@ def main():
     launcher = json.loads(args.launcher_json)
     if not isinstance(launcher, list) or any(not isinstance(x, str) for x in launcher):
         p.error("launcher must be an array of strings")
-    if args.kind == "hybrid" and (not launcher or not any("{ranks}" in x for x in launcher)):
+    if args.site == "vanda" and args.kind == "hybrid" and launcher:
+        p.error("Vanda uses --launcher-mode single-node|pbs so host slots/resources are verified dynamically")
+    if args.kind == "hybrid" and args.site != "vanda" and (not launcher or not any("{ranks}" in x for x in launcher)):
         p.error("hybrid requires an explicit MPI launcher with {ranks}; verify placement on Vanda")
     if args.kind == "openmp" and launcher:
         p.error("OpenMP runs use no MPI launcher")
@@ -78,6 +83,32 @@ def main():
         p.error("build log required to record actual compiler commands; use --build-log")
     if args.serial and not Path(args.serial).is_file():
         p.error("serial baseline does not exist")
+    if args.site == "vanda" and args.kind == "hybrid" and not args.serial:
+        p.error("hybrid scaling requires a real same-build --serial baseline")
+    if args.site == "vanda" and args.kind == "hybrid" and args.warmups < 1:
+        p.error("hybrid Vanda runs require an excluded warmup for thread-affinity diagnostics")
+    validation=None
+    if args.site == "vanda" and args.kind == "hybrid":
+        for ranks,threads in configs:
+            try:
+                pbs_launcher(allocation,ranks,threads,args.launcher_mode or os.environ.get("VANDA_MPI_LAUNCHER","single-node"))
+            except ValueError as error:
+                p.error(str(error))
+        if not args.validation_evidence:
+            p.error("hybrid Vanda benchmarks require --validation-evidence before timing")
+        validation=json.loads(args.validation_evidence.read_text())
+        if (validation.get("passed") is not True or not validation.get("checks")
+                or any(c.get("passed") is not True for c in validation["checks"])):
+            p.error("distributed validation has not passed")
+        if validation.get("launcher_mode") != (args.launcher_mode or os.environ.get("VANDA_MPI_LAUNCHER","single-node")):
+            p.error("benchmark launcher differs from the successful validation")
+        covered={(c.get("mpi_ranks"),c.get("omp_threads")) for c in validation["checks"]
+                 if c.get("implementation")=="hybrid" and c.get("passed") is True}
+        if any(config not in covered for config in configs):
+            p.error("a hybrid benchmark configuration lacks successful numerical validation")
+        for name,path in [("serial",args.serial),("hybrid",executable)]:
+            if validation.get("binary_sha256",{}).get(name) != hashlib.sha256(Path(path).read_bytes()).hexdigest():
+                p.error(f"{name} binary differs from successful validation")
     if args.site == "vanda" and not args.source_provenance:
         p.error("Vanda requires --source-provenance recorded at submission; compute nodes do not need Git")
     if args.source_provenance:
@@ -99,6 +130,7 @@ def main():
         "git_head": git_head,
         "git_status": git_status,
         "source_provenance": provenance,
+        "validation_evidence": validation,
         "source_sha256": {str(path): hashlib.sha256(path.read_bytes()).hexdigest()
             for root in ["src", "include", "scripts", "tests"]
             for path in sorted(Path(root).glob("*")) if path.is_file()},
@@ -135,7 +167,16 @@ def main():
         kind, ranks, threads, n = task
         env = dict(os.environ, OMP_NUM_THREADS=str(threads), OMP_DYNAMIC="FALSE",
                    OMP_PLACES="cores", OMP_PROC_BIND="close", OMP_DISPLAY_AFFINITY="TRUE")
-        prefix = [s.format(ranks=ranks, threads=threads) for s in launcher] if kind == "hybrid" else []
+        if args.kind == "hybrid":
+            # A hybrid may create its first team inside the timed loop. Keep
+            # runtime affinity printing in excluded warmups, not measurements.
+            env["OMP_DISPLAY_AFFINITY"] = "TRUE" if warmup else "FALSE"
+        if args.site == "vanda" and args.kind == "hybrid":
+            # Bind the serial baseline to one core through the same launcher;
+            # MPI startup stays outside the solver's own solve_seconds metric.
+            prefix = pbs_launcher(allocation,ranks,threads,args.launcher_mode or os.environ.get("VANDA_MPI_LAUNCHER","single-node"))
+        else:
+            prefix = [s.format(ranks=ranks, threads=threads) for s in launcher] if kind == "hybrid" else []
         solver = str(Path(args.serial).resolve()) if kind == "serial" else str(executable)
         cmd = prefix + [solver, "--n", str(n), "--mode", "fixed", "--iterations", str(args.iterations)]
         proc = subprocess.run(cmd, env=env, capture_output=True, text=True, timeout=1800)
@@ -154,6 +195,10 @@ def main():
         if len(lines) != 1:
             raise RuntimeError("solver must emit exactly one primary JSON line")
         result = json.loads(lines[0])
+        if "n" in result:
+            if "N" in result and result["N"] != result["n"]:
+                raise RuntimeError("conflicting N/n output fields")
+            result["N"] = result["n"]
         for key, value in {"implementation": kind, "N": n, "mode": "fixed", "mpi_ranks": ranks,
                            "omp_threads": threads, "iterations_completed": args.iterations,
                            "converged": None, "max_update": None}.items():

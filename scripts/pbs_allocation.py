@@ -38,8 +38,18 @@ def inspect_allocation(required_cpus):
     affinity = sorted(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else None
     if affinity is not None and len(affinity) < required_cpus:
         raise RuntimeError("The job cpuset exposes fewer CPUs than this experiment requires")
+    physical = None
+    if affinity:
+        try:
+            physical = len({((Path(f"/sys/devices/system/cpu/cpu{cpu}/topology")/"physical_package_id").read_text().strip(),
+                            (Path(f"/sys/devices/system/cpu/cpu{cpu}/topology")/"core_id").read_text().strip())
+                            for cpu in affinity})
+        except OSError:
+            pass # Non-Linux local fixtures cannot inspect Linux topology.
+    if physical is not None and physical < required_cpus:
+        raise RuntimeError("The job cpuset exposes fewer physical cores than this experiment requires")
     return dict(job_id=job_id, hostname=host, nodes=sorted(nodes), resources=resources,
-                allowed_os_cpus=affinity, requested_cpus=required_cpus)
+                allowed_os_cpus=affinity, visible_physical_cores=physical, requested_cpus=required_cpus)
 
 
 if __name__ == "__main__":
