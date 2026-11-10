@@ -1,0 +1,44 @@
+Loading GCC/11.3.0
+  Loading requirement: GCCcore/11.3.0 zlib/1.2.12-GCCcore-11.3.0
+    binutils/2.38-GCCcore-11.3.0
+Loading CMake/3.24.3-GCCcore-11.3.0
+  Loading requirement: ncurses/6.3-GCCcore-11.3.0 bzip2/1.0.8-GCCcore-11.3.0
+    OpenSSL/1.1 cURL/7.83.0-GCCcore-11.3.0 XZ/5.2.5-GCCcore-11.3.0
+    libarchive/3.6.1-GCCcore-11.3.0
+/app1/ebapps/arches/flat-avx2/software/CMake/3.24.3-GCCcore-11.3.0/bin/cmake
+/app1/ebapps/arches/flat-avx2/software/GCCcore/11.3.0/bin/c++
+/bin/python3
+GN-A40-075
+c++ (GCC) 11.3.0
+Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+cmake version 3.24.3
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).
+PBS job: 1535699.stdct-mgmt-02
+-- The CXX compiler identification is GNU 11.3.0
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /app1/ebapps/arches/flat-avx2/software/GCCcore/11.3.0/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found Python3: /bin/python3.9 (found version "3.9.18") found components: Interpreter 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /nfs/home/svu/e1496655/HPC-Parallelization/build-vanda
+[ 25%] Building CXX object CMakeFiles/poisson_core.dir/src/poisson.cpp.o
+[ 50%] Linking CXX static library libpoisson_core.a
+[ 50%] Built target poisson_core
+[ 75%] Building CXX object CMakeFiles/poisson_serial.dir/src/serial_main.cpp.o
+[100%] Linking CXX executable poisson_serial
+[100%] Built target poisson_serial
+Internal ctest changing into directory: /nfs/home/svu/e1496655/HPC-Parallelization/build-vanda
+Test project /nfs/home/svu/e1496655/HPC-Parallelization/build-vanda
+    Start 1: serial_correctness
+1/1 Test #1: serial_correctness ...............   Passed    0.30 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.32 sec

@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -N poisson_serial
+#PBS -l select=1:ncpus=1:mem=4gb
+#PBS -l walltime=01:00:00
+#PBS -j oe
+set -euo pipefail
+: "${PBS_JOBID:?Submit this script with qsub on Vanda}"
+cd "${PBS_O_WORKDIR:?Missing submission directory}"
+# The HPC owner should supply the agreed compiler/CMake setup file if needed.
+# Example: qsub -v HPC_SETUP=/absolute/path/to/team_environment.sh jobs/serial_vanda.pbs
+if [[ -n "${HPC_SETUP:-}" ]]; then source "$HPC_SETUP"; fi
+command -v cmake
+command -v c++
+command -v python3
+hostname
+c++ --version
+cmake --version
+printf 'PBS job: %s\n' "$PBS_JOBID"
+export OMP_NUM_THREADS=1
+cmake -S . -B build-vanda -DCMAKE_BUILD_TYPE=Release
+cmake --build build-vanda --parallel 1
+ctest --test-dir build-vanda --output-on-failure
+# First submission tests correctness only. Enable benchmarks after a small trial.
+if [[ "${RUN_BENCHMARK:-0}" == 1 ]]; then
+  python3 scripts/benchmark_serial.py --executable build-vanda/poisson_serial \
+    --output-dir "results/hpc/serial-${PBS_JOBID}"
+fi

@@ -1,0 +1,7 @@
+build*/
+__pycache__/
+*.pyc
+results/local/
+results/hpc/
+*.o*
+*.e*
