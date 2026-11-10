@@ -2,11 +2,13 @@
 """Safety of experiment provenance and resource checks; uses tiny real solves."""
 import csv
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 class PipelineTests(unittest.TestCase):
@@ -50,6 +52,25 @@ class PipelineTests(unittest.TestCase):
                           ("--solver","build/missing"),("--iterations","0")]:
                 self.benchmark(out,*extra,expected=2)
                 self.assertFalse(out.exists())
+
+    def test_submitted_provenance_needs_no_git(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            (root/"bin").mkdir()
+            marker=root/"git-was-called"
+            git=root/"bin/git"
+            git.write_text(f"#!/bin/sh\ntouch '{marker}'\nexit 127\n")
+            git.chmod(0o755)
+            provenance=root/"source-provenance.json"
+            fixture=dict(recorded_on="login_node", git_head={"stdout":"fixture-commit\n"},
+                         git_status={"stdout":""}, archive_sha256="fixture-only")
+            provenance.write_text(json.dumps(fixture))
+            with patch.dict(os.environ, PATH=str(root/"bin")+os.pathsep+os.environ["PATH"]):
+                self.benchmark(root/"run","--source-provenance",str(provenance))
+            metadata=json.loads((root/"run/metadata.json").read_text())
+            self.assertEqual(metadata["git_head"],fixture["git_head"])
+            self.assertEqual(metadata["source_provenance"],fixture)
+            self.assertFalse(marker.exists(),"benchmark invoked Git despite supplied login-node provenance")
 
 
 if __name__ == "__main__":

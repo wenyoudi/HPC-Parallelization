@@ -18,6 +18,44 @@ On 10 November the agent's network-enabled SSH probe reached Vanda but could not
 
 Preparation checks performed locally: CMake 3.24.3 configured and built Release targets; both CTest entries passed (the local-row check and 13 numerical groups). The MPI smoke source compiled against the local MPI installation without being launched. Three allocation-fixture tests and two data-pipeline groups passed; shell/Python syntax checks passed. These results do not claim GCC 11.3/Open MPI 4.1.4 execution on Vanda.
 
+## First submission failures and fixes
+
+The user reported two distinct outcomes; neither is a passing Vanda numerical/MPI test:
+
+- **1535955, MPI smoke:** started on CN-077 with 8 CPUs and the confirmed modules, then failed before compilation at `git: command not found`, exit 127, phase `allocation`. This is a confirmed compute-node Git dependency bug.
+- **1535954, OpenMP validation:** held with `run_count=21`, `Exit_status=-3` and `job held, too many failed attempts to run`, with no job log. PBS normalized the request to `1:ncpus=8:mpiprocs=1:ompthreads=8:mem=55GB`, `place=excl`. This is a scheduler launch/hold outcome, not a solver test failure; the reported fields do not establish its root cause.
+
+Git commit and working-tree status are now saved by `submit_vanda.sh` on the **login node**, alongside `source-provenance.json` and a SHA-256-identified `source.tar.gz`. Submission requires a clean checkout. Each compute job verifies the archive and builds from its frozen source snapshot, with no Git invocation. Benchmarks read the saved provenance instead of querying Git. Updating the checkout after submission does not alter the source of queued jobs. Preserve these files with the results.
+
+Validation and smoke now request **shared** placement: eight CPU workers do not require node exclusivity for correctness/launch checks. `place=shared` is standard PBS syntax; site vnode policy can still override sharing. See the [PBS reference guide](https://2021.help.altair.com/2021.1/PBSProfessional/PBSReferenceGuide2021.1.pdf). Benchmarks retain exclusive placement by default to reduce contention; `VANDA_PLACEMENT=shared` or `excl` can override it explicitly. Do not pool performance data from different placements.
+
+This change is a controlled smaller request, **not confirmation that exclusivity caused the hold**. The requested memory remains 4 GB; the observed 55 GB normalization is recorded as a site-applied value, not silently treated as our request or diagnosed as the cause. New successful job/allocation evidence is required.
+
+### Update the existing isolated checkout and retry
+
+In the existing Vanda clone created for this contribution, leaving Person A's directory alone:
+
+```bash
+git status --short
+git branch --show-current
+git pull --ff-only origin feature/openmp-hybrid
+bash -l "$PWD/scripts/setup_vanda.sh"
+bash -l "$PWD/scripts/submit_vanda.sh" openmp-validate
+bash -l "$PWD/scripts/submit_vanda.sh" mpi-smoke
+```
+
+Expect branch `feature/openmp-hybrid`. If there are local edits, preserve/commit them before submission; do not reset them. These commands create fresh job directories and IDs; they do not release, modify, cancel or overwrite jobs 1535954/1535955. Follow the status checks below using the new IDs. No benchmark should be launched until correctness succeeds.
+
+If the new validation is held before a job log appears, preserve the normalized scheduler fields from the new ID (substitute its actual value):
+
+```bash
+qstat -fx NEW_JOB_ID | sed -n '/job_state =/p; /Hold_Types =/p; /comment =/p; /run_count =/p; /Exit_status =/p; /Resource_List/p; /exec_host =/p; /exec_vnode =/p'
+# If available to your account:
+tracejob NEW_JOB_ID
+```
+
+Keep the generated `job.pbs`, submission provenance and scheduler diagnostics; ask NUS HPC support to inspect server/MOM and launch-hook/prologue records for that ID/time. Do not repeatedly release a system hold or guess a different memory/node request without evidence. The agent has not inspected those cluster logs or established the hold's cause.
+
 ## 1. Create a completely separate checkout
 
 Run in your authenticated **Vanda SSH shell**, not inside Person A's directory:
@@ -54,7 +92,7 @@ qstat -xf "$validation_id" | sed -n '/job_state =/p; /Exit_status =/p'
 
 Require `success: true`, `exit_status: 0`, `phase: complete` and all CTest tests passed. Some PBS installations remove completed-job history; the per-job JSON and saved logs remain available. A missing status file while queued/running means the job has not finished, not success. If validation fails, return the job directory before running the benchmark.
 
-This job requests **one exclusive node, 8 CPUs, 1 MPI slot, ompthreads=8, 4 GB memory, 30 minutes**. It builds in a fresh `results/vanda/job-openmp-validate-*/build/` using CMake 3.24.3 Release, then runs the existing local-row and 13 numerical test groups, including 1/2/4/8 threads, convergence/fixed modes, boundaries, asymmetric coordinates, residual/error checks and non-convergence. No other build directory is cleaned. Machine-readable CTest JUnit is saved as `validation.xml`; detailed output is in `validation-detail.log`.
+This job requests **one shared node allocation, 8 CPUs, 1 MPI slot, ompthreads=8, 4 GB memory, 30 minutes**. It verifies/unpacks the submitted snapshot to `results/vanda/job-openmp-validate-*/source/` and builds in that job's `build/` directory using CMake 3.24.3 Release, then runs the existing local-row and 13 numerical test groups, including 1/2/4/8 threads, convergence/fixed modes, boundaries, asymmetric coordinates, residual/error checks and non-convergence. No other build directory is cleaned. Machine-readable CTest JUnit is saved as `validation.xml`; detailed output is in `validation-detail.log`.
 
 ## 3. Submit the OpenMP benchmark
 
@@ -78,7 +116,7 @@ wc -l "$benchmark_dir/measurements/raw.jsonl"
 
 Require the same successful status, **48 measured JSONL rows** (4 grid sizes × 4 thread counts × 3 repeats), plus 16 separately stored warm-ups. The job rebuilds/tests in its own directory and stops before measurements if correctness fails.
 
-The benchmark uses N=128/256/512/1024, fixed K=1000 and 1/2/4/8 threads, one warm-up and exactly three recorded runs for every configuration. Measurements are shuffled with seed 5208; medians/minima/maxima are computed afterward. The one-node eight-CPU allocation is identical to validation. Every process sets `OMP_DYNAMIC=FALSE`, `OMP_PLACES=cores`, `OMP_PROC_BIND=close` and `OMP_DISPLAY_AFFINITY=TRUE`. Check actual CPU-binding reports in `measurements/stdout.log` and `stderr.log`; do not claim verified binding merely because variables were set. The PBS allocation, compute-node hostname/CPU topology, module list, compiler/MPI versions, command lines, executable/source hashes and Git state are saved. There is no solution CSV during benchmarking.
+The benchmark uses N=128/256/512/1024, fixed K=1000 and 1/2/4/8 threads, one warm-up and exactly three recorded runs for every configuration. Measurements are shuffled with seed 5208; medians/minima/maxima are computed afterward. It uses the same eight-CPU resource count as validation but **exclusive placement by default** for performance isolation. If site policy requires shared placement, submit with `VANDA_PLACEMENT=shared bash -l "$PWD/scripts/submit_vanda.sh" openmp`, retain that distinction in analysis, and inspect actual normalized placement. Every process sets `OMP_DYNAMIC=FALSE`, `OMP_PLACES=cores`, `OMP_PROC_BIND=close` and `OMP_DISPLAY_AFFINITY=TRUE`. Check actual CPU-binding reports in `measurements/stdout.log` and `stderr.log`; do not claim verified binding merely because variables were set. The PBS allocation, compute-node hostname/CPU topology, module list, compiler/MPI versions, command lines, executable/source hashes and submission-time Git state are saved. There is no solution CSV during benchmarking.
 
 Serial-baseline speedup/efficiency remain absent until Person A's source/executable interface is integrated into **this checkout** and measured with identical settings. Person A's successful correctness job alone does not provide a timing baseline. The current plots can show explicitly labeled OpenMP-one-thread-relative speedup.
 
@@ -101,7 +139,7 @@ cat "$mpi_dir/mpi-smoke/results.jsonl"
 qstat -xf "$mpi_id" | sed -n '/job_state =/p; /Exit_status =/p'
 ```
 
-The job requests **one exclusive node, 8 CPUs, 8 MPI slots, ompthreads=1, 4 GB, 30 minutes**. CMake finds MPI through the verified Open MPI module and builds `tests/mpi_smoke.cpp`. The launcher runs 1/2/4/8 ranks using the PBS node file with explicit `--map-by slot:PE=1 --bind-to core --nooversubscribe --report-bindings`, following the [Open MPI 4.1 launcher documentation](https://www.open-mpi.org/doc/v4.1/man1/mpirun.1.php). It checks MPI_THREAD_FUNNELED support on every rank, collective sum, a neighbor ring, expected rank count, execution on the allocated single node and non-overlapping Linux affinity masks. A rank bound to a physical core may include both SMT siblings in its CPU mask.
+The job requests **one shared node allocation, 8 CPUs, 8 MPI slots, ompthreads=1, 4 GB, 30 minutes**. CMake finds MPI through the verified Open MPI module and builds `tests/mpi_smoke.cpp` from the submitted snapshot. The launcher runs 1/2/4/8 ranks using the PBS node file with explicit `--map-by slot:PE=1 --bind-to core --nooversubscribe --report-bindings`, following the [Open MPI 4.1 launcher documentation](https://www.open-mpi.org/doc/v4.1/man1/mpirun.1.php). It checks MPI_THREAD_FUNNELED support on every rank, collective sum, a neighbor ring, expected rank count, execution on the allocated single node and non-overlapping Linux affinity masks. A rank bound to a physical core may include both SMT siblings in its CPU mask.
 
 Require four `success:true` records in `mpi-smoke/results.jsonl`, plus the overall successful job status. Per-rank host/CPU records and launcher stderr are retained for every rank count. This proves only single-node process launch/basic communication/thread support/binding; it does not validate Poisson decomposition, inter-node communication, halo exchange or hybrid numerical correctness. `submit_vanda.sh hybrid` remains blocked until Member B's code arrives.
 
@@ -119,11 +157,11 @@ for kind in openmp-validate openmp mpi-smoke; do
     > "$dir/pbs-final-status.txt"
 done
 archive="$HOME/project3-openmp-vanda-results-$(date -u +%Y%m%dT%H%M%SZ).tar.gz"
-tar --exclude='*/build' -czf "$archive" results/vanda
+tar --exclude='*/build' --exclude='*/source' -czf "$archive" results/vanda
 printf 'Download this exact file: %s\n' "$archive"
 ```
 
-The archive includes each generated PBS script, job ID, `status.json`, allocation/compute inventory, configure/build logs, copied CMake cache/compile commands, validation XML/details, raw JSONL, affinity diagnostics, MPI smoke evidence and median CSV. Build subdirectories/binaries are omitted; no credentials or full PBS `Variable_List` are collected. If one job fails, archive its directory too and return the error; do not edit its status/results.
+The archive includes each generated PBS script, job ID, login-node commit/status/provenance, frozen `source.tar.gz`, `status.json`, allocation/compute inventory, configure/build logs, copied CMake cache/compile commands, validation XML/details, raw JSONL, affinity diagnostics, MPI smoke evidence and median CSV. Build binaries and unpacked source directories are omitted; the small source archive preserves the exact revision without duplicate unpacked files. No credentials or full PBS `Variable_List` are collected. If one job fails, archive its directory too and return the error; do not edit its status/results.
 
 Run **locally** (replace account and archive filename with the values from your session):
 

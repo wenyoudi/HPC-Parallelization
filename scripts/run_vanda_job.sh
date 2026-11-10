@@ -4,9 +4,10 @@ set -euo pipefail
 : "${BENCH_KIND:?}"
 : "${VANDA_JOB_DIR:?}"
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
-[[ -f .vanda-openmp-workspace && $(cat .vanda-openmp-workspace) == "$(pwd -P)" ]] || exit 1
-[[ "$VANDA_JOB_DIR" == results/vanda/job-* && -d "$VANDA_JOB_DIR" ]] || exit 1
-jobdir="$(pwd -P)/$VANDA_JOB_DIR"
+[[ "$VANDA_JOB_DIR" == /*/results/vanda/job-* && -d "$VANDA_JOB_DIR" ]] || exit 1
+jobdir=$(cd "$VANDA_JOB_DIR" && pwd -P)
+[[ $(pwd -P) == "$jobdir/source" ]] || exit 1
+test -s "$jobdir/source-provenance.json" && test -s "$jobdir/source-commit.txt"
 test ! -e "$jobdir/status.json" || { echo 'Refusing to overwrite a completed attempt.' >&2; exit 1; }
 exec > >(tee "$jobdir/job.log") 2>&1
 phase=environment
@@ -30,8 +31,6 @@ python3 scripts/pbs_allocation.py --cpus 8 --output "$jobdir/allocation.json"
 source scripts/discover_environment.sh "$jobdir/compute-environment"
 cmake --version > "$jobdir/compute-environment/cmake.txt"
 mpicxx --showme > "$jobdir/compute-environment/mpi-wrapper.txt"
-git rev-parse HEAD > "$jobdir/source-commit.txt"
-git status --porcelain > "$jobdir/source-status.txt"
 builddir="$jobdir/build"
 phase=configure
 mpi=OFF
@@ -61,7 +60,8 @@ else
         python3 scripts/benchmark.py --kind openmp --solver "$builddir/openmp" \
             --site vanda --allocated-cpus 8 --threads 1,2,4,8 \
             --sizes 128,256,512,1024 --iterations 1000 --warmups 1 --repeats 3 \
-            --compiler g++ --build-log "$jobdir/build.log" --output "$jobdir/measurements"
+            --compiler g++ --build-log "$jobdir/build.log" \
+            --source-provenance "$jobdir/source-provenance.json" --output "$jobdir/measurements"
         phase=analysis
         python3 scripts/analyze.py "$jobdir/measurements/raw.jsonl" --output "$jobdir/analysis"
     elif [[ "$BENCH_KIND" != openmp-validate ]]; then

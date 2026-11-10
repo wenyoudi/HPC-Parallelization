@@ -43,6 +43,7 @@ def main():
     p.add_argument("--placement-label", default="OMP_PLACES=cores; OMP_PROC_BIND=close")
     p.add_argument("--build-log", type=Path, default=Path("build/build.log"))
     p.add_argument("--compiler", default=os.environ.get("CXX", "c++"), help="Compiler command whose version is recorded")
+    p.add_argument("--source-provenance", type=Path, help="Login-node Git provenance for the submitted source snapshot")
     args = p.parse_args()
     sizes = [int(x) for x in args.sizes.split(",")]
     configs = ([(1, int(x)) for x in args.threads.split(",")] if args.kind == "openmp"
@@ -77,6 +78,14 @@ def main():
         p.error("build log required to record actual compiler commands; use --build-log")
     if args.serial and not Path(args.serial).is_file():
         p.error("serial baseline does not exist")
+    if args.site == "vanda" and not args.source_provenance:
+        p.error("Vanda requires --source-provenance recorded at submission; compute nodes do not need Git")
+    if args.source_provenance:
+        provenance = json.loads(args.source_provenance.read_text())
+        git_head, git_status = provenance["git_head"], provenance["git_status"]
+    else:
+        provenance = None
+        git_head, git_status = capture(["git", "rev-parse", "HEAD"]), capture(["git", "status", "--porcelain"])
     args.output.mkdir(parents=True, exist_ok=False)
     run_id = str(uuid.uuid4())
     metadata = {
@@ -87,8 +96,9 @@ def main():
         "binary_sha256": hashlib.sha256(executable.read_bytes()).hexdigest(),
         "build_log": args.build_log.read_text(),
         "compiler_version": capture(shlex.split(args.compiler) + ["--version"]),
-        "git_head": capture(["git", "rev-parse", "HEAD"]),
-        "git_status": capture(["git", "status", "--porcelain"]),
+        "git_head": git_head,
+        "git_status": git_status,
+        "source_provenance": provenance,
         "source_sha256": {str(path): hashlib.sha256(path.read_bytes()).hexdigest()
             for root in ["src", "include", "scripts", "tests"]
             for path in sorted(Path(root).glob("*")) if path.is_file()},
