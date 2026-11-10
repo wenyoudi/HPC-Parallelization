@@ -1,45 +1,45 @@
 #!/usr/bin/env bash
-# Generate and submit a PBS job only after live environment verification.
-# Usage: bash scripts/submit_vanda.sh openmp [qsub queue/project options...]
+# Only generates/submits jobs here; compilation and tests run inside PBS.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-kind=${1:?Use openmp or hybrid}
+kind=${1:?Use openmp-validate, openmp, mpi-smoke or hybrid}
 shift
-[[ "$kind" == openmp || "$kind" == hybrid ]]
-config=scripts/vanda-env.local.sh
-test -f "$config" || { echo "Create $config following report/vanda-runbook.md" >&2; exit 1; }
-source "$config"
-: "${HPC_CXX:?Set HPC_CXX after verifying modules}"
-[[ ${VANDA_VERIFIED_SCHEDULER:-} == pbs ]] || { echo 'Live PBS verification required.' >&2; exit 1; }
-[[ $(cat "${VANDA_DISCOVERY_DIR:?}/scheduler.txt") == pbs ]]
-test -s "$VANDA_DISCOVERY_DIR/pbs-server.txt"
-command -v qsub >/dev/null
-command -v "$HPC_CXX" >/dev/null
+case "$kind" in openmp-validate|openmp|mpi-smoke|hybrid) ;; *) echo 'Unknown job kind.' >&2; exit 1;; esac
+[[ -f .vanda-openmp-workspace && $(cat .vanda-openmp-workspace) == "$(pwd -P)" ]] || {
+    echo 'Use the separate clone and run bash scripts/setup_vanda.sh first.' >&2; exit 1;
+}
+[[ $(git branch --show-current) == feature/openmp-hybrid ]] || exit 1
+source scripts/vanda-env.sh
 if [[ "$kind" == hybrid ]]; then
-    test -f src/hybrid.cpp || { echo 'Integrate Member B MPI + OpenMP first.' >&2; exit 1; }
-    [[ ${MPI_LAUNCHER_JSON:-[]} != '[]' && -n ${MPI_PLACEMENT_LABEL:-} ]]
+    echo 'Hybrid integration still awaits Member B; run mpi-smoke first.' >&2
+    exit 1
 fi
 stamp=$(date -u +%Y%m%dT%H%M%SZ)
-jobdir="results/vanda/job-${kind}-${stamp}"
+jobdir="results/vanda/job-${kind}-${stamp}-$$"
 mkdir -p "$jobdir"
-# A single node makes 8x1/4x2/2x4/1x8 directly comparable. Reserve eight slots
-# for hybrid MPI launchers; the launcher must place ranks with threads per rank.
-slots=1
-[[ "$kind" == hybrid ]] && slots=8
 job="$jobdir/job.pbs"
+slots=1
+ompthreads=8
+jobname=p3-omp-bench
+[[ "$kind" != openmp-validate ]] || jobname=p3-omp-check
+[[ "$kind" != mpi-smoke ]] || jobname=p3-mpi-smoke
+[[ "$kind" != mpi-smoke ]] || { slots=8; ompthreads=1; }
+# Pin the job to this isolated checkout, regardless of qsub's working directory.
+printf -v quoted_root '%q' "$(pwd -P)"
 cat > "$job" <<EOF
-#!/usr/bin/env bash
-#PBS -N p3-${kind}
-#PBS -l select=1:ncpus=8:mpiprocs=${slots}:mem=4gb
+#!/bin/bash -l
+#PBS -N ${jobname}
+#PBS -l select=1:ncpus=8:mpiprocs=${slots}:ompthreads=${ompthreads}:mem=4gb
 #PBS -l place=excl
 #PBS -l walltime=00:30:00
 #PBS -j oe
 set -euo pipefail
-cd "\$PBS_O_WORKDIR"
-source scripts/vanda-env.local.sh
+cd ${quoted_root}
 export BENCH_KIND=${kind}
-export BENCH_OUTPUT=${jobdir}/measurements
-bash scripts/run_vanda_job.sh
+export VANDA_JOB_DIR=${jobdir}
+source scripts/run_vanda_job.sh
 EOF
-qsub "$@" "$job" | tee "$jobdir/job-id.txt"
-echo "Job script and ID: $jobdir"
+# Queue/project flags can follow KIND; no account names are guessed.
+/opt/pbs/bin/qsub "$@" "$job" | tee "$jobdir/job-id.txt"
+printf '%s\n' "$jobdir" > "results/vanda/latest-${kind}.txt"
+echo "Job script, build, status and results: $jobdir"

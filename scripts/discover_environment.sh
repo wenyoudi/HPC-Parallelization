@@ -10,7 +10,7 @@ project3_discover() (
     date -u '+%Y-%m-%dT%H:%M:%SZ' > "$out/time-utc.txt"
     uname -a > "$out/system.txt"
     hostname >> "$out/system.txt"
-    for tool in c++ g++ clang++ mpicxx mpirun qstat qsub sbatch srun lscpu; do
+    for tool in c++ g++ clang++ cmake python3 mpicxx mpirun qstat qsub sbatch srun lscpu; do
         command -v "$tool" >> "$out/tools.txt" 2>&1 || true
     done
     if command -v qstat >/dev/null && command -v qsub >/dev/null; then

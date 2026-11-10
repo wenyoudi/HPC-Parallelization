@@ -2,37 +2,70 @@
 set -euo pipefail
 : "${PBS_JOBID:?Run only inside an allocated PBS job}"
 : "${BENCH_KIND:?}"
-: "${BENCH_OUTPUT:?}"
-source scripts/vanda-env.local.sh
-mkdir -p build
-export CXX="$HPC_CXX" CXXFLAGS="$HPC_CXXFLAGS" OMPFLAGS="$HPC_OMPFLAGS" LDLIBS="$HPC_LDLIBS"
-export OMP_NUM_THREADS=8 OMP_DYNAMIC=FALSE OMP_PLACES=cores OMP_PROC_BIND=close
-# Capture actual compute-node allocation and modules; no full environment dump.
-mkdir -p "$(dirname "$BENCH_OUTPUT")/compute-environment"
-source scripts/discover_environment.sh "$(dirname "$BENCH_OUTPUT")/compute-environment/inventory"
-make clean
-mkdir -p build
-make test CXX="$CXX" CXXFLAGS="$CXXFLAGS" OMPFLAGS="$OMPFLAGS" LDLIBS="$LDLIBS" \
-  2>&1 | tee build/build.log
-extra=()
-if [[ -n ${SERIAL_EXE:-} ]]; then
-    # Member A must supply the serial target. Rebuild it after clean, with the
-    # same exported compiler/flags, so the baseline cannot be a stale binary.
-    make serial 2>&1 | tee -a build/build.log
-    test -x "$SERIAL_EXE"
-    extra+=(--serial "$SERIAL_EXE")
-fi
-if [[ "$BENCH_KIND" == hybrid ]]; then
-    # Replace the Makefile dependency guard after integrating Member B's code.
-    make hybrid 2>&1 | tee -a build/build.log
-    python3 tests/validate_hybrid.py --reference build/openmp --candidate build/hybrid \
-      --launcher-json "$MPI_LAUNCHER_JSON" --asymmetric
-    if [[ -n ${SERIAL_EXE:-} ]]; then
-        python3 tests/validate_hybrid.py --reference "$SERIAL_EXE" --candidate build/hybrid \
-          --launcher-json "$MPI_LAUNCHER_JSON"
+: "${VANDA_JOB_DIR:?}"
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+[[ -f .vanda-openmp-workspace && $(cat .vanda-openmp-workspace) == "$(pwd -P)" ]] || exit 1
+[[ "$VANDA_JOB_DIR" == results/vanda/job-* && -d "$VANDA_JOB_DIR" ]] || exit 1
+jobdir="$(pwd -P)/$VANDA_JOB_DIR"
+test ! -e "$jobdir/status.json" || { echo 'Refusing to overwrite a completed attempt.' >&2; exit 1; }
+exec > >(tee "$jobdir/job.log") 2>&1
+phase=environment
+finish() {
+    rc=$?
+    trap - EXIT
+    python3 - "$jobdir/status.json" "$rc" "$phase" "$BENCH_KIND" "$PBS_JOBID" <<'STATUS_PY'
+import datetime, json, socket, sys
+from pathlib import Path
+path, rc, phase, kind, job_id = sys.argv[1:]
+Path(path).write_text(json.dumps(dict(job_id=job_id, kind=kind, exit_status=int(rc),
+    success=int(rc)==0, phase=phase, hostname=socket.gethostname(),
+    finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat()), indent=2)+'\n')
+STATUS_PY
+    exit "$rc"
+}
+trap finish EXIT
+source scripts/vanda-env.sh
+phase=allocation
+python3 scripts/pbs_allocation.py --cpus 8 --output "$jobdir/allocation.json"
+source scripts/discover_environment.sh "$jobdir/compute-environment"
+cmake --version > "$jobdir/compute-environment/cmake.txt"
+mpicxx --showme > "$jobdir/compute-environment/mpi-wrapper.txt"
+git rev-parse HEAD > "$jobdir/source-commit.txt"
+git status --porcelain > "$jobdir/source-status.txt"
+builddir="$jobdir/build"
+phase=configure
+mpi=OFF
+[[ "$BENCH_KIND" != mpi-smoke ]] || mpi=ON
+cmake -S . -B "$builddir" -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_CXX_COMPILER="$(command -v g++)" \
+    -DPython3_EXECUTABLE="$(command -v python3)" \
+    -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DBUILD_MPI_SMOKE="$mpi" \
+    2>&1 | tee "$jobdir/configure.log"
+phase=build
+targets=(openmp test_rows)
+[[ "$BENCH_KIND" != mpi-smoke ]] || targets=(mpi_smoke)
+cmake --build "$builddir" --parallel 8 --verbose --target "${targets[@]}" \
+    2>&1 | tee "$jobdir/build.log"
+cp "$builddir/compile_commands.json" "$jobdir/compile_commands.json"
+cp "$builddir/CMakeCache.txt" "$jobdir/CMakeCache.txt"
+if [[ "$BENCH_KIND" == mpi-smoke ]]; then
+    phase=mpi-smoke
+    python3 scripts/mpi_smoke.py --solver "$builddir/mpi_smoke" --output "$jobdir/mpi-smoke"
+else
+    phase=validation
+    ctest --test-dir "$builddir" --output-on-failure --output-junit "$jobdir/validation.xml" \
+        2>&1 | tee "$jobdir/validation.log"
+    cp "$builddir/Testing/Temporary/LastTest.log" "$jobdir/validation-detail.log"
+    if [[ "$BENCH_KIND" == openmp ]]; then
+        phase=benchmark
+        python3 scripts/benchmark.py --kind openmp --solver "$builddir/openmp" \
+            --site vanda --allocated-cpus 8 --threads 1,2,4,8 \
+            --sizes 128,256,512,1024 --iterations 1000 --warmups 1 --repeats 3 \
+            --compiler g++ --build-log "$jobdir/build.log" --output "$jobdir/measurements"
+        phase=analysis
+        python3 scripts/analyze.py "$jobdir/measurements/raw.jsonl" --output "$jobdir/analysis"
+    elif [[ "$BENCH_KIND" != openmp-validate ]]; then
+        echo 'Unsupported workload.' >&2; exit 1
     fi
-    extra+=(--launcher-json "$MPI_LAUNCHER_JSON" --placement-label "$MPI_PLACEMENT_LABEL")
 fi
-bash "scripts/benchmark_${BENCH_KIND}.sh" --site vanda --allocated-cpus 8 \
-  --output "$BENCH_OUTPUT" "${extra[@]}"
-python3 scripts/analyze.py "$BENCH_OUTPUT/raw.jsonl" --output "$BENCH_OUTPUT/analysis"
+phase=complete

@@ -9,3 +9,4 @@ __pycache__/
 *.out
 *.err
 /scripts/vanda-env.local.sh
+/.vanda-openmp-workspace

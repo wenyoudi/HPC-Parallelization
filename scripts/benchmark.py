@@ -9,11 +9,11 @@ import os
 from pathlib import Path
 import platform
 import random
-import re
 import shlex
 import shutil
 import subprocess
 import uuid
+from pbs_allocation import inspect_allocation
 
 
 def capture(cmd):
@@ -64,27 +64,10 @@ def main():
         if ranks > min(sizes):
             p.error("ranks must not exceed N")
     if args.site == "vanda":
-        if not os.environ.get("PBS_JOBID"):
-            p.error("Vanda measurements require an active PBS allocation")
-        nodefile = os.environ.get("PBS_NODEFILE")
-        if not nodefile or not Path(nodefile).is_file():
-            p.error("PBS_NODEFILE required to verify single-node placement")
-        if len(set(Path(nodefile).read_text().split())) != 1:
-            p.error("this benchmark plan requires exactly one allocated node")
-        # Retain resource fields only; PBS Variable_List may contain private env values.
-        status = capture(["qstat", "-f", os.environ["PBS_JOBID"]])
-        if status.get("returncode") != 0:
-            p.error("cannot verify active PBS resource allocation with qstat -f")
-        allocation = dict(re.findall(r"(?m)^\s*(Resource_List\.(?:ncpus|nodect|select|place|mem|walltime)|exec_host|exec_vnode|queue)\s*=\s*(.*)$",
-                                     status["stdout"]))
         try:
-            actual_cpus = int(allocation["Resource_List.ncpus"])
-        except (KeyError, ValueError):
-            p.error("PBS did not report Resource_List.ncpus; verify allocation before benchmarking")
-        if args.allocated_cpus > actual_cpus:
-            p.error("declared CPU allocation exceeds PBS Resource_List.ncpus")
-        if hasattr(os, "sched_getaffinity") and args.allocated_cpus > len(os.sched_getaffinity(0)):
-            p.error("PBS cpuset exposes fewer CPUs than the requested benchmark allocation")
+            allocation = inspect_allocation(args.allocated_cpus)
+        except (RuntimeError, OSError, subprocess.TimeoutExpired) as error:
+            p.error(str(error))
     else:
         allocation = None
     executable = Path(args.solver).resolve()
@@ -117,6 +100,8 @@ def main():
         "mpi_version": capture(["mpirun", "--version"]) if shutil.which("mpirun") else None,
     }
     metadata["source_sha256"]["Makefile"] = hashlib.sha256(Path("Makefile").read_bytes()).hexdigest()
+    if Path("CMakeLists.txt").is_file():
+        metadata["source_sha256"]["CMakeLists.txt"] = hashlib.sha256(Path("CMakeLists.txt").read_bytes()).hexdigest()
     # Strip machine identifiers unrelated to reproducibility from macOS inventory.
     hardware = metadata["hardware"]
     if "stdout" in hardware:

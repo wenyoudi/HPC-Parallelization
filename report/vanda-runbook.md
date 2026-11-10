@@ -1,93 +1,144 @@
-# NUS Vanda execution runbook
+# Vanda validation and benchmarking — verified environment, 10 November 2026
 
-## Access findings (9 November 2026)
+## Verified facts and access
 
-Both a bounded HTTPS request and noninteractive SSH probe failed at DNS resolution of `vanda.nus.edu.sg` from the development Mac, including the network-enabled retry. The in-app browser independently returned `net::ERR_NAME_NOT_RESOLVED`; the public web reader also could not open the portal. No Vanda-specific SSH alias/account was configured. No password, MFA code or private key was read or requested. This establishes that this session cannot currently reach Vanda; it does not establish that the user's HPC account is invalid.
-
-[NUS IT's batch job documentation](https://nusit.nus.edu.sg/services/getting-started/how-to-run-batch-job/) identifies PBS Pro. The [NUS course teaching team's Vanda guide](https://mle4217-5219.matsci.dev/orientation/vanda/) specifically identifies Vanda's PBS scheduler, SSH and OnDemand access. These are documentation evidence; **live scheduler version, module names, queues, project/account flags, compiler and MPI remain unverified**. No final submitted job or cluster performance result is claimed. The PBS generator is conditional on successful live discovery; it does not assume Slurm.
-
-## User authentication steps
-
-1. Register/activate your NUS HPC account if needed using the links in the course guide. Connect to NUS VPN when off campus; the guide specifies NUS/NUS-STU Wi-Fi on campus and warns that eduroam alone does not provide HPC access.
-2. Open <https://vanda.nus.edu.sg> yourself and finish NUS authentication/MFA in the portal. Never paste credentials into this chat, scripts or repository. If first-time activation is needed, run `ssh YOUR_NUSNETID@vanda.nus.edu.sg` in your own terminal and authenticate there; verify any new host-key fingerprint through NUS documentation/support.
-3. Open **Vanda Shell Access** in OnDemand for light inventory/submission only. Do not benchmark on login nodes. Alternatively use your authenticated SSH session. If Codex cannot use your authenticated session, execute the commands below yourself and return the resulting inventory/data files (no credentials).
-
-## Transfer code and discover the actual environment
-
-From Vanda's shell, clone the feature branch once pushed:
+The user successfully loaded and checked these exact modules on Vanda:
 
 ```bash
-git clone --branch feature/openmp-hybrid https://github.com/wenyoudi/HPC-Parallelization.git
-cd HPC-Parallelization
-source scripts/discover_environment.sh results/vanda/discovery
-cat results/vanda/discovery/scheduler.txt
-cat results/vanda/discovery/pbs-server.txt
-cat results/vanda/discovery/queues.txt
-cat results/vanda/discovery/modules-available.txt
+module load GCC/11.3.0
+module load CMake/3.24.3-GCCcore-11.3.0
+module load OpenMPI/4.1.4-GCC-11.3.0
 ```
 
-If Git access is unavailable, upload a source archive via OnDemand Files instead (locally, after committing: `git archive --format=tar.gz -o /tmp/project3-source.tar.gz feature/openmp-hybrid`; upload and extract into a new directory). Do not transfer the Mac binaries.
+GCC and the MPI wrapper use GCC 11.3.0; `mpirun` is Open MPI 4.1.4. PBS commands are `/opt/pbs/bin/qsub` and `/opt/pbs/bin/qstat`. Person A's serial compilation/correctness job `1535699.stdct-mgmt-02` completed with Exit_status 0, **as reported by the user**; this is not an OpenMP result and its logs have not been inspected in this chat.
 
-Review discovery output; it must identify a responding PBS server before using the supplied generator. If the live scheduler differs, stop submission and adapt the generator to the verified scheduler. Inventory records login-node topology separately; actual benchmark hardware is collected inside the allocation. Use `hpc pbs help` for current NUS queue/resource guidance.
+On 10 November the agent's network-enabled SSH probe reached Vanda but could not authenticate using its available session. The desktop tool cannot access Terminal. The user's authenticated terminal remains usable by the user; no password, MFA code or private key needs to be shared. The commands below run from that existing SSH session. No Vanda OpenMP/MPI-smoke job has yet been submitted by the agent, and no new runtime is claimed.
+
+`scripts/vanda-env.sh` loads these exact modules and checks tool versions both before submission and inside each job. It also checks Python >=3.8, required by the existing test/data scripts. If that preflight fails, inspect `module avail Python` on Vanda and return the output; no unverified Python module name is assumed. CMake Release uses C++17 and `-O3 -DNDEBUG`, without fast-math. Existing OpenMP solver/kernel/test logic is unchanged.
+
+Preparation checks performed locally: CMake 3.24.3 configured and built Release targets; both CTest entries passed (the local-row check and 13 numerical groups). The MPI smoke source compiled against the local MPI installation without being launched. Three allocation-fixture tests and two data-pipeline groups passed; shell/Python syntax checks passed. These results do not claim GCC 11.3/Open MPI 4.1.4 execution on Vanda.
+
+## 1. Create a completely separate checkout
+
+Run in your authenticated **Vanda SSH shell**, not inside Person A's directory:
 
 ```bash
-cp scripts/vanda-env.example.sh scripts/vanda-env.local.sh
-# Edit scripts/vanda-env.local.sh using module names found above.
-# Set VANDA_VERIFIED_SCHEDULER="pbs" only after verifying qstat -Bf.
-# Set HPC_CXX to the compiler available after loading those modules.
-# Set supported HPC_OMPFLAGS (e.g. -fopenmp for a verified GNU compiler).
-# Load the matching MPI module only after the MPI/hybrid code arrives.
+work=$(mktemp -d "$HOME/project3-openmp-vanda.XXXXXXXX")
+git clone --single-branch --branch feature/openmp-hybrid \
+  https://github.com/wenyoudi/HPC-Parallelization.git "$work/repo"
+cd "$work/repo"
+printf 'Your separate checkout: %s\n' "$PWD"
+bash -l "$PWD/scripts/setup_vanda.sh"
 ```
 
-Do not invent a module name. Capture `module list`, compiler version and `mpicxx -show`/`--showme` after loading. For hybrid, set `MPI_LAUNCHER_JSON` and `MPI_PLACEMENT_LABEL` for **that exact MPI**. Its arguments must bind each rank to a disjoint group of `{threads}` cores, with `{ranks}` processes on the one allocated node. Verify using launcher binding reports plus `OMP_DISPLAY_AFFINITY=TRUE` (preserved in stdout/stderr logs). No universal MPI placement syntax is assumed. Hybrid scripts intentionally remain gated until B's code and a verified launcher are available.
+Keep this shell open in the new checkout. `mktemp` creates a fresh directory every time. No `git pull`, checkout, clean, rebuild or write is performed in Person A's directory. Setup only loads/verifies modules, inventories the login environment and records a checkout marker; it does **not** compile, test or benchmark on the login node. The submission script requires this marker and the feature branch. Setup evidence is under `results/vanda/setup-*`.
 
-## Submit OpenMP correctness and benchmark job
+If the repository cannot be cloned on Vanda, create a source archive locally (`git archive --format=tar.gz -o /tmp/project3-source.tar.gz feature/openmp-hybrid`) and transfer it, but the normal scripts require a Git checkout/branch marker. Prefer cloning; report a Git/network failure before attempting a source-only adaptation.
 
-From the project directory on Vanda after completing the config:
+## 2. Submit OpenMP validation first
 
 ```bash
-bash scripts/submit_vanda.sh openmp
-# If your account requires queue/project flags, supply the VERIFIED values:
-# bash scripts/submit_vanda.sh openmp -q QUEUE -P PROJECT
-qstat -u "$USER"
+bash -l "$PWD/scripts/submit_vanda.sh" openmp-validate
+validation_dir=$(cat results/vanda/latest-openmp-validate.txt)
+validation_id=$(cat "$validation_dir/job-id.txt")
+qstat "$validation_id"
 ```
 
-The generated job requests one exclusive node allocation with 8 CPU cores, 4 GB memory and 30 minutes. The generator passes optional queue/project flags directly to `qsub` without guessing names. Verify these resource settings against your current queue policy before submission. The job reloads your module config, inventories the compute node, builds with logged commands, runs numerical tests and only then benchmarks. Defaults: N=128/256/512/1024, K=1000, threads=1/2/4/8, one warm-up and three measured runs per configuration. No solution CSV is written in benchmarks. Settings are validated and all measurements are fixed mode.
-
-`OMP_NUM_THREADS`, `OMP_DYNAMIC=FALSE`, `OMP_PLACES=cores` and `OMP_PROC_BIND=close` are set for each run. Compare requested affinity with actual binding diagnostics; ensure the PBS cpuset grants physical cores and no concurrent workload shares them. Metadata saves actual allocation, host CPU topology, loaded module names, compiler commands, MPI version, executable hash, Git revision and working-tree status. Results are written under `results/vanda/job-openmp-TIMESTAMP/measurements/`. A failure prevents subsequent benchmarks and must be investigated, not skipped.
-
-Once serial is available, add Member A's `make serial` rule using the same compiler/optimization variables and set `SERIAL_EXE` in your config. The job rebuilds serial after cleaning, then the benchmark runner includes a serial baseline within the same run. The plotter leaves serial speedup/efficiency blank if it is absent.
-
-## Hybrid job after integration
-
-Complete [hybrid-integration.md](hybrid-integration.md) first, replace the intentional `make hybrid` guard with the actual build rule, and configure your verified MPI launcher. Then:
+After PBS finishes (repeat `qstat` as needed):
 
 ```bash
-bash scripts/submit_vanda.sh hybrid
+cat "$validation_dir/status.json"
+cat "$validation_dir/validation.log"
+qstat -xf "$validation_id" | sed -n '/job_state =/p; /Exit_status =/p'
 ```
 
-The initial prepared matrix includes 1×1/2×1/4×1/8×1 for strong scaling and 8×1/4×2/2×4/1×8 for equal eight-worker comparisons. The prepared `tests/validate_hybrid.py` first checks nondivisible rows, N=ranks, one rank, first/last boundaries, K=0/1/2/31, final-halo metrics and convergence against OpenMP, including asymmetric coordinates. It also compares against serial if configured; repeat with Member B's MPI executable as reference before claiming all-variant validation. None of these MPI tests have run yet. Keep the same N/K and timing scope as OpenMP and serial. One node only; multinode experiments require a separately verified allocation/launcher plan.
+Require `success: true`, `exit_status: 0`, `phase: complete` and all CTest tests passed. Some PBS installations remove completed-job history; the per-job JSON and saved logs remain available. A missing status file while queued/running means the job has not finished, not success. If validation fails, return the job directory before running the benchmark.
 
-## Retrieve and analyze measured data
+This job requests **one exclusive node, 8 CPUs, 1 MPI slot, ompthreads=8, 4 GB memory, 30 minutes**. It builds in a fresh `results/vanda/job-openmp-validate-*/build/` using CMake 3.24.3 Release, then runs the existing local-row and 13 numerical test groups, including 1/2/4/8 threads, convergence/fixed modes, boundaries, asymmetric coordinates, residual/error checks and non-convergence. No other build directory is cleaned. Machine-readable CTest JUnit is saved as `validation.xml`; detailed output is in `validation-detail.log`.
 
-The run directory contains `metadata.json`, `raw.jsonl`, `warmups.jsonl`, `stdout.log`, `stderr.log`, allocated node list and `analysis/summary.csv`. Keep the generated job, scheduler output and compute inventory alongside it.
+## 3. Submit the OpenMP benchmark
 
-On Vanda, replace the timestamp below with the actual directory:
+Once validation passes:
 
 ```bash
-tar -czf /tmp/project3-vanda-results.tar.gz results/vanda/job-openmp-TIMESTAMP
+bash -l "$PWD/scripts/submit_vanda.sh" openmp
+benchmark_dir=$(cat results/vanda/latest-openmp.txt)
+benchmark_id=$(cat "$benchmark_dir/job-id.txt")
+qstat "$benchmark_id"
 ```
 
-Download using OnDemand Files, or run locally with your own account:
+After completion:
 
 ```bash
-scp YOUR_NUSNETID@vanda.nus.edu.sg:/tmp/project3-vanda-results.tar.gz /tmp/
-tar -xzf /tmp/project3-vanda-results.tar.gz
-MPLCONFIGDIR=/tmp/project3-mpl python3 scripts/analyze.py \
-  results/vanda/job-openmp-TIMESTAMP/measurements/raw.jsonl \
+cat "$benchmark_dir/status.json"
+qstat -xf "$benchmark_id" | sed -n '/job_state =/p; /Exit_status =/p'
+cat "$benchmark_dir/analysis/summary.csv"
+wc -l "$benchmark_dir/measurements/raw.jsonl"
+```
+
+Require the same successful status, **48 measured JSONL rows** (4 grid sizes × 4 thread counts × 3 repeats), plus 16 separately stored warm-ups. The job rebuilds/tests in its own directory and stops before measurements if correctness fails.
+
+The benchmark uses N=128/256/512/1024, fixed K=1000 and 1/2/4/8 threads, one warm-up and exactly three recorded runs for every configuration. Measurements are shuffled with seed 5208; medians/minima/maxima are computed afterward. The one-node eight-CPU allocation is identical to validation. Every process sets `OMP_DYNAMIC=FALSE`, `OMP_PLACES=cores`, `OMP_PROC_BIND=close` and `OMP_DISPLAY_AFFINITY=TRUE`. Check actual CPU-binding reports in `measurements/stdout.log` and `stderr.log`; do not claim verified binding merely because variables were set. The PBS allocation, compute-node hostname/CPU topology, module list, compiler/MPI versions, command lines, executable/source hashes and Git state are saved. There is no solution CSV during benchmarking.
+
+Serial-baseline speedup/efficiency remain absent until Person A's source/executable interface is integrated into **this checkout** and measured with identical settings. Person A's successful correctness job alone does not provide a timing baseline. The current plots can show explicitly labeled OpenMP-one-thread-relative speedup.
+
+## 4. Submit the MPI launch smoke test
+
+This is independent of the absent MPI Poisson solver and may be submitted alongside OpenMP validation:
+
+```bash
+bash -l "$PWD/scripts/submit_vanda.sh" mpi-smoke
+mpi_dir=$(cat results/vanda/latest-mpi-smoke.txt)
+mpi_id=$(cat "$mpi_dir/job-id.txt")
+qstat "$mpi_id"
+```
+
+After completion:
+
+```bash
+cat "$mpi_dir/status.json"
+cat "$mpi_dir/mpi-smoke/results.jsonl"
+qstat -xf "$mpi_id" | sed -n '/job_state =/p; /Exit_status =/p'
+```
+
+The job requests **one exclusive node, 8 CPUs, 8 MPI slots, ompthreads=1, 4 GB, 30 minutes**. CMake finds MPI through the verified Open MPI module and builds `tests/mpi_smoke.cpp`. The launcher runs 1/2/4/8 ranks using the PBS node file with explicit `--map-by slot:PE=1 --bind-to core --nooversubscribe --report-bindings`, following the [Open MPI 4.1 launcher documentation](https://www.open-mpi.org/doc/v4.1/man1/mpirun.1.php). It checks MPI_THREAD_FUNNELED support on every rank, collective sum, a neighbor ring, expected rank count, execution on the allocated single node and non-overlapping Linux affinity masks. A rank bound to a physical core may include both SMT siblings in its CPU mask.
+
+Require four `success:true` records in `mpi-smoke/results.jsonl`, plus the overall successful job status. Per-rank host/CPU records and launcher stderr are retained for every rank count. This proves only single-node process launch/basic communication/thread support/binding; it does not validate Poisson decomposition, inter-node communication, halo exchange or hybrid numerical correctness. `submit_vanda.sh hybrid` remains blocked until Member B's code arrives.
+
+If the queue requires a project or queue selection, append the **actual values** to any submission command, for example `... openmp -q QUEUE -P PROJECT`. No queue/account name is invented. Requested defaults are in each generated `job.pbs`; if PBS rejects the memory/exclusive-node policy, return its exact error for adjustment. Never execute `run_vanda_job.sh`, `mpirun` or the benchmark directly on a login node.
+
+## 5. Archive and retrieve results
+
+After all relevant jobs finish, from the dedicated Vanda checkout:
+
+```bash
+for kind in openmp-validate openmp mpi-smoke; do
+  dir=$(cat "results/vanda/latest-$kind.txt")
+  id=$(cat "$dir/job-id.txt")
+  qstat -xf "$id" | sed -n '/job_state =/p; /Exit_status =/p' \
+    > "$dir/pbs-final-status.txt"
+done
+archive="$HOME/project3-openmp-vanda-results-$(date -u +%Y%m%dT%H%M%SZ).tar.gz"
+tar --exclude='*/build' -czf "$archive" results/vanda
+printf 'Download this exact file: %s\n' "$archive"
+```
+
+The archive includes each generated PBS script, job ID, `status.json`, allocation/compute inventory, configure/build logs, copied CMake cache/compile commands, validation XML/details, raw JSONL, affinity diagnostics, MPI smoke evidence and median CSV. Build subdirectories/binaries are omitted; no credentials or full PBS `Variable_List` are collected. If one job fails, archive its directory too and return the error; do not edit its status/results.
+
+Run **locally** (replace account and archive filename with the values from your session):
+
+```bash
+scp YOUR_NUSNETID@vanda.nus.edu.sg:~/project3-openmp-vanda-results-TIMESTAMP.tar.gz /tmp/
+cd '/Users/wenyoudi/Desktop/DSA5208 Scalable Distributed Computing/HPC-Parallelization'
+tar -xzf /tmp/project3-openmp-vanda-results-TIMESTAMP.tar.gz
+```
+
+Alternatively download the same archive through OnDemand Files. Return the archive here. To generate figures locally after extraction, use the actual `job-openmp-*` directory name:
+
+```bash
+MPLCONFIGDIR=/tmp/project3-mpl /opt/anaconda3/bin/python scripts/analyze.py \
+  results/vanda/job-openmp-TIMESTAMP-PID/measurements/raw.jsonl \
   --output report/generated/vanda-openmp-TIMESTAMP --plots
 ```
 
-Use a local Python with Matplotlib (on the development Mac `/opt/anaconda3/bin/python` has it). The analysis accepts one consistent run at a time, computes medians from raw samples, preserves min/max, and labels all plots VANDA. Never change a local row's `site` label to manufacture cluster evidence. Return the whole run archive for analysis and report integration, avoiding credentials and account configuration. Download promptly; `/tmp` is temporary.
-
-Until Vanda is reachable and these compute jobs pass, the instructor's cluster-runtime requirement remains outstanding. This blocks actual cluster measurements only, not local implementation/testing.
+Actual Vanda data remain separate from `results/local/`. Do not relabel local rows, pool different jobs/allocations, or infer numerical convergence from fixed K. The instructor's compute-node runtime requirement is met only when these actual benchmark results are returned and checked. Hybrid integration/benchmarking and comparisons with Person A's serial reference remain subsequent work.

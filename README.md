@@ -23,7 +23,29 @@ The development Mac has Apple Clang and an existing Anaconda OpenMP runtime. Use
 bash scripts/build_local.sh
 ```
 
-This runs the tests too. Set `OPENMP_PREFIX` if the runtime is elsewhere. It installs nothing. The local MPI wrapper is broken (its configured compiler is absent); no MPI executable has been built or tested here.
+This runs the tests too. Set `OPENMP_PREFIX` if the runtime is elsewhere. It installs nothing. The local MPI wrapper's default compiler is absent; the new smoke source was compile-checked by overriding it to Apple Clang, without running MPI locally. This does not validate the Vanda Open MPI environment.
+
+## Vanda: verified modules and separate PBS jobs
+
+On 10 November the user verified GCC/11.3.0, CMake/3.24.3-GCCcore-11.3.0, OpenMPI/4.1.4-GCC-11.3.0 and PBS (`/opt/pbs/bin/qsub`, `/opt/pbs/bin/qstat`). Person A's successful serial test job is separate evidence; no OpenMP Vanda measurements have been returned yet. `scripts/vanda-env.sh` now loads and rechecks exactly those modules. CMake Release uses C++17, `-O3 -DNDEBUG`, and no fast-math. Python >=3.8 is checked for the existing validation/data scripts.
+
+Run these commands in your authenticated **Vanda SSH shell**, creating a fresh checkout that does not touch Person A's directory:
+
+```bash
+work=$(mktemp -d "$HOME/project3-openmp-vanda.XXXXXXXX")
+git clone --single-branch --branch feature/openmp-hybrid \
+  https://github.com/wenyoudi/HPC-Parallelization.git "$work/repo"
+cd "$work/repo"
+bash -l "$PWD/scripts/setup_vanda.sh"
+bash -l "$PWD/scripts/submit_vanda.sh" openmp-validate
+bash -l "$PWD/scripts/submit_vanda.sh" mpi-smoke
+# Once the validation status.json reports success:true:
+bash -l "$PWD/scripts/submit_vanda.sh" openmp
+```
+
+Submission only runs inventory/module checks on the login node. Each PBS job requests one exclusive eight-CPU node allocation and builds under its own `results/vanda/job-*/build/`; no other checkout/build directory is cleaned. OpenMP jobs use one MPI slot and eight OpenMP threads; MPI smoke uses eight slots and one thread. Benchmark configurations are 1/2/4/8 threads, N=128/256/512/1024, fixed K=1000, one warm-up and three recorded repetitions (48 measured rows). Affinity requests/reports and allocation, compiler, hardware and Git metadata are retained. The smoke test checks 1/2/4/8-rank launch, FUNNELED support, collective/ring communication and disjoint bindings; it does not implement MPI Poisson.
+
+See [the updated runbook](report/vanda-runbook.md) for exact status, result retrieval and plotting commands. The agent can reach Vanda but cannot use the authenticated SSH session, so these jobs must currently be submitted manually. Live CPU hardware and measurements will come from returned compute-node evidence.
 
 ## Numerical and output contract
 
@@ -76,6 +98,6 @@ The runner requires a build log (default `build/build.log`; record compilation w
 
 `analyze.py` produces median/min/max CSV and optional PDF/PNG plots (Matplotlib is needed only for plotting). It never pools different runs/sites/modes/allocations. Serial speedup and efficiency remain empty without a true serial baseline. OpenMP-one-thread-relative speedup/efficiency are labeled separately. Local Mac affinity requests may not be honored; consult preserved stdout/stderr logs. Use homogeneous allocated Vanda cores for formal performance conclusions.
 
-**Formal report runtimes must come from allocated Atlas/Vanda compute nodes.** See [the Vanda runbook](report/vanda-runbook.md) for network/authentication steps, live scheduler/module discovery, exact conditional submission commands and result retrieval. No Vanda runtime data have been collected. Benchmark directories under `results/vanda/` are ignored by Git; archive and share them separately before scratch cleanup.
+**Formal report runtimes must come from allocated Atlas/Vanda compute nodes.** See [the Vanda runbook](report/vanda-runbook.md) for the verified module configuration, exact submission commands and result retrieval. No Vanda OpenMP runtime data have been returned to this chat. Benchmark directories under `results/vanda/` are ignored by Git; archive and share them separately before scratch cleanup.
 
 Report contributions: [OpenMP design and evidence](report/openmp-hybrid.md), [hybrid handoff](report/hybrid-integration.md), [Vanda instructions](report/vanda-runbook.md), [AI usage](report/ai-usage.md). Actual committed local results and figures are under `results/local/` and `report/figures/`.
