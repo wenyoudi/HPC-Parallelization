@@ -49,7 +49,7 @@ phase=build
 targets=(openmp test_rows)
 [[ "$BENCH_KIND" != mpi-smoke ]] || targets=(mpi_smoke)
 [[ "$BENCH_KIND" != serial-compare ]] || targets+=(poisson_serial)
-case "$BENCH_KIND" in mpi-validate|hybrid-validate|hybrid) targets+=(mpi mpi_smoke poisson_serial);; esac
+case "$BENCH_KIND" in mpi-validate|hybrid-validate|hybrid) targets+=(mpi mpi_smoke poisson_serial test_hybrid_rows);; esac
 case "$BENCH_KIND" in hybrid-validate|hybrid) targets+=(hybrid);; esac
 cmake --build "$builddir" --parallel "${VANDA_CPUS:-8}" --verbose --target "${targets[@]}" \
     2>&1 | tee "$jobdir/build.log"

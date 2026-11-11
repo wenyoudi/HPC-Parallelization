@@ -23,12 +23,12 @@ add_test(NAME openmp_numerical COMMAND ${Python3_EXECUTABLE}
 set_tests_properties(local_rows openmp_numerical PROPERTIES
     ENVIRONMENT "OMP_DYNAMIC=FALSE;OMP_DISPLAY_AFFINITY=FALSE" TIMEOUT 300)
 
+option(BUILD_DISTRIBUTED_SOLVERS "Build Member B MPI and the real hybrid integration" OFF)
 option(BUILD_SERIAL_REFERENCE "Build the pinned, unmodified Member A reference" OFF)
-if(BUILD_SERIAL_REFERENCE)
+if(BUILD_SERIAL_REFERENCE OR BUILD_DISTRIBUTED_SOLVERS)
     add_subdirectory(references/serial)
 endif()
 
-option(BUILD_DISTRIBUTED_SOLVERS "Build Member B MPI and the real hybrid integration" OFF)
 if(BUILD_DISTRIBUTED_SOLVERS)
     if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cmake/DistributedSolvers.cmake")
         message(FATAL_ERROR "Member B integration missing: see cmake/README.md; no MPI/hybrid solver is supplied yet")

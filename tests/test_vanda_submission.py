@@ -29,7 +29,7 @@ class SubmissionTests(unittest.TestCase):
                 'pwd -P > "$VANDA_JOB_DIR/source-launch-cwd.txt"\n')
             (root/".gitignore").write_text("/results/\n/.vanda-openmp-workspace\n")
             (root/"source.txt").write_text("submitted source\n")
-            subprocess.run(["git","init","-b","feature/openmp-hybrid"],cwd=root,capture_output=True,check=True)
+            subprocess.run(["git","init","-b","codex/hybrid-mpi-integration"],cwd=root,capture_output=True,check=True)
             subprocess.run(["git","add","."],cwd=root,check=True)
             subprocess.run(["git","-c","user.name=Fixture","-c","user.email=fixture@example.invalid",
                             "commit","-m","fixture"],cwd=root,capture_output=True,check=True)
@@ -69,6 +69,22 @@ class SubmissionTests(unittest.TestCase):
                 self.assertNotEqual(blocked.returncode,0)
                 self.assertIn("integration is pending",blocked.stderr)
                 self.assertFalse((root/f"results/vanda/latest-{kind}.txt").exists())
+            # A fixture adapter lets us render the now-integrated job types;
+            # only the bootstrap payload executes, never a fake solver or PBS job.
+            (root/"cmake").mkdir()
+            (root/"cmake/DistributedSolvers.cmake").write_text("# fixture build adapter\n")
+            subprocess.run(["git","add","cmake"],cwd=root,check=True)
+            subprocess.run(["git","-c","user.name=Fixture","-c","user.email=fixture@example.invalid",
+                            "commit","-m","fixture adapter"],cwd=root,capture_output=True,check=True)
+            for kind,placement in [("mpi-validate","shared"),("hybrid-validate","shared"),("hybrid","excl")]:
+                subprocess.run(["bash","scripts/submit_vanda.sh",kind],cwd=root,env=dict(env,VANDA_CPUS="8"),
+                               capture_output=True,text=True,check=True)
+                out=root/(root/f"results/vanda/latest-{kind}.txt").read_text().strip()
+                body=(out/"job.pbs").read_text()
+                self.assertIn("ncpus=8:mpiprocs=8:ompthreads=1",body)
+                self.assertIn(f"#PBS -l place={placement}",body)
+                subprocess.run(["bash","-n",str(out/"job.pbs")],check=True)
+                jobs.append(out)
             # A subsequent working-tree edit cannot change an already submitted snapshot.
             (root/"source.txt").write_text("later edit\n")
             for out in jobs:

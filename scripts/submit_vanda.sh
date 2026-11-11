@@ -8,7 +8,7 @@ case "$kind" in openmp-validate|openmp|mpi-smoke|serial-compare|mpi-validate|hyb
 [[ -f .vanda-openmp-workspace && $(cat .vanda-openmp-workspace) == "$(pwd -P)" ]] || {
     echo 'Use the separate clone and run bash scripts/setup_vanda.sh first.' >&2; exit 1;
 }
-[[ $(git branch --show-current) == feature/openmp-hybrid ]] || exit 1
+case "$(git branch --show-current)" in feature/openmp-hybrid|codex/hybrid-mpi-integration) ;; *) exit 1;; esac
 source scripts/vanda-env.sh
 cpus=${VANDA_CPUS:-8}
 [[ "$cpus" =~ ^[1-9][0-9]*$ ]] || { echo 'VANDA_CPUS must be positive.' >&2; exit 1; }
@@ -54,6 +54,8 @@ jobname=p3-omp-bench
 [[ "$kind" != mpi-smoke ]] || { slots=$cpus; ompthreads=1; }
 case "$kind" in mpi-validate|hybrid-validate|hybrid) slots=$cpus; ompthreads=1; jobname=p3-${kind};; esac
 [[ "$kind" != hybrid-validate ]] || jobname=p3-hyb-check
+walltime=00:30:00
+case "$kind" in hybrid-validate|hybrid) walltime=01:00:00;; esac
 placement=${VANDA_PLACEMENT:-shared}
 [[ ( "$kind" != openmp && "$kind" != hybrid ) || -n ${VANDA_PLACEMENT:-} ]] || placement=excl
 case "$placement" in shared|excl) ;; *) echo 'VANDA_PLACEMENT must be shared or excl.' >&2; exit 1;; esac
@@ -64,7 +66,7 @@ cat > "$job" <<EOF
 #PBS -N ${jobname}
 #PBS -l select=1:ncpus=${cpus}:mpiprocs=${slots}:ompthreads=${ompthreads}:mem=4gb
 #PBS -l place=${placement}
-#PBS -l walltime=00:30:00
+#PBS -l walltime=${walltime}
 #PBS -j oe
 set -euo pipefail
 cd ${quoted_jobdir}

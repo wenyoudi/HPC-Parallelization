@@ -100,6 +100,8 @@ def main():
         if (validation.get("passed") is not True or not validation.get("checks")
                 or any(c.get("passed") is not True for c in validation["checks"])):
             p.error("distributed validation has not passed")
+        if validation.get("site") != "vanda":
+            p.error("Vanda hybrid timing requires successful Vanda validation, not local evidence")
         if validation.get("launcher_mode") != (args.launcher_mode or os.environ.get("VANDA_MPI_LAUNCHER","single-node")):
             p.error("benchmark launcher differs from the successful validation")
         covered={(c.get("mpi_ranks"),c.get("omp_threads")) for c in validation["checks"]

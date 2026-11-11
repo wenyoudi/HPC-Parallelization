@@ -1,0 +1,18 @@
+{
+  "repository": "https://github.com/wenyoudi/HPC-Parallelization",
+  "branch": "feature/mpi-poisson",
+  "commit": "1756effac3929c873e56624314fea54ca5155863",
+  "files_sha256": {
+    "include/mpi_poisson.hpp": "e1d117fd8fa0f4b7f2b02c63c2e3963444211ce4aa466c74b5ddd782de2dfb58",
+    "src/mpi_poisson.cpp": "cdc746a7f77f8cdc91a7610c18f91799336ae40899d33b0fe976b20ed021785c",
+    "src/mpi_main.cpp": "adc79a380912c9fc2f621dc78185ed34592089bdc7d03433ca9a28ebeaa1ca20",
+    "docs/mpi_handoff.md": "af34b39612cd7bba0a1499366f09d97bff0cb80e2bc16da3795ae4025f0083f6"
+  },
+  "upstream_validation": {
+    "path": "results/hpc/mpi-1539665.stdct-mgmt-02/validation/validation.json",
+    "sha256": "d746aa32452dddedfb4c25b6951f5377e07244b006872a623c99f8418cb04da6",
+    "passed": true,
+    "checks": 162,
+    "job_id": "1539665.stdct-mgmt-02"
+  }
+}

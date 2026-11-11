@@ -1,40 +1,106 @@
-# Hybrid integration handoff — target 11 November 2026
+# Hybrid integration — 11 November 2026
 
-## Dependency and status
+Implementation branch: `codex/hybrid-mpi-integration`, based on
+`feature/openmp-hybrid` commit `2ea8a5a`. Existing OpenMP source/kernels/results
+and Person A's serial baseline are unchanged.
 
-Current update: user-confirmed MPI communication smoke job 1536986 passed on GN-A40-074 at 1/2/4 ranks with the single-node TM workaround. This is not Poisson or hybrid validation. Member A's serial source is available at commit `0e20822` and pinned verbatim under `references/serial/`; Member B's MPI source is still unavailable, confirmed by the user. Do not recreate their framework.
+## Reused MPI implementation
 
-Prepared infrastructure now includes `scripts/mpi_launcher.py` (actual-PBS slots and rank/thread checks; `single-node` and original `pbs` modes), `scripts/validate_distributed.py`, a gated hybrid benchmark, and future PBS job kinds `mpi-validate`/`hybrid-validate`/`hybrid`. The actual CMake integration hook remains absent deliberately; see `cmake/README.md`. Actual integration and cluster numerical tests are pending. Existing OpenMP source/results and the upstream serial baseline are preserved.
+B's `feature/mpi-poisson` commit `1756eff` supplies the four reviewed files:
+`docs/mpi_handoff.md`, `include/mpi_poisson.hpp`, `src/mpi_poisson.cpp`, and
+`src/mpi_main.cpp`. They are preserved verbatim in `references/mpi/`, with exact
+hashes in `UPSTREAM.json`. A's serial core matches the version B used.
+The MPI-only target compiles these same sources. B's build files/scripts and
+existing validation/benchmark/grid CSV evidence are not merged or overwritten.
 
-On 9 November the local repository and remote `main` contained only a README. No MPI implementation or other remote branch existed. This branch therefore supplies the OpenMP solver and reusable local kernels, **not a competing MPI framework**. There is no `src/hybrid.cpp` executable yet. `make hybrid` deliberately fails with a dependency message; benchmark scripts refuse a missing binary.
+The upstream receipt at
+`results/hpc/mpi-1539665.stdct-mgmt-02/validation/validation.json` reports 162/162
+passing cases on GN-A40-075. It was inspected directly on B's branch. This is
+upstream MPI evidence, not new hybrid evidence. The old handoff's pending-status
+paragraph predates that evidence commit.
 
-Member B must provide:
+`solve_hybrid` calls B's `decompose_rows` and `exchange_halos` directly. Row counts
+are N/P plus one for the first N%P ranks, with local-to-global y mapping supplied
+by B's domain object. The same full-row blocking Sendrecv calls/tags 100/101,
+physical zero halos, int-count bounds and rank<=N restriction apply. Only the
+local update is replaced by the OpenMP operation.
 
-- MPI solver source and headers, with build command and supported CLI/defaults.
-- Row decomposition (`local_rows`, global first interior row, upper/lower neighbor), buffer ownership, stride and indexing.
-- Blocking halo exchange routine and tags; error-handling conventions.
-- Final global metric reductions and nonuniform gather/export routines.
-- Known passing MPI tests and compiler/MPI module names on Vanda.
+## RHS, threads and timing
 
-Agreed indexing: row is y, column is x. For rank `r`, `q=N/ranks`, `rem=N%ranks`, `local_rows=q+(r<rem)`, first global row `1+r*q+min(r,rem)`. Local row `i` maps to `first+i-1`. Require `ranks<=N`. Each flat buffer has `(local_rows+2)*(N+2)` elements; local rows 0 and `local_rows+1` are halos. This describes the agreed interface for comparison with B's implementation, not new MPI code.
+A/B store unscaled f. The existing standalone OpenMP kernel expects h²*f. A new
+overload in `include/hybrid/local_rows.hpp` uses unscaled f and forms h²*f in the
+stencil, matching serial/MPI arithmetic and avoiding a second scale factor.
+The original OpenMP implementation/header is untouched. The overload retains
+static row scheduling, two buffers and a thread-local maximum reduction.
 
-## Integration sequence
+`hybrid_main` requests/checks MPI_THREAD_FUNNELED. The solve additionally checks
+MPI_Is_thread_main, MPI_Query_thread and that it is outside an OpenMP region.
+Dynamic teams are disabled; the actual team size is probed and its minimum and
+maximum compared across ranks before timing. A mismatch aborts the communicator.
+The JSON reports actual threads and the minimum provided MPI support level.
 
-1. Reuse B's decomposition, exchanges and exports. Create the hybrid entry point around that framework; avoid changing B's standalone MPI numerical path.
-2. Initialize with `MPI_Init_thread(..., MPI_THREAD_FUNNELED, &provided)` on the main thread. Fail collectively if `provided<MPI_THREAD_FUNNELED`. Check MPI call statuses using B's convention and abort the communicator on fatal errors to avoid stranded ranks.
-3. Initialize both solution buffers to zero. Evaluate RHS using global row coordinates and store `h²*f` for the kernel; this is a shared optimization that must be agreed for fair comparisons across variants.
-4. Immediately before timing, call `MPI_Barrier`, then take `MPI_Wtime` on each rank. Allocate and initialize beforehand.
-5. On each iteration, the main thread exchanges **old** top/bottom interior rows into **old** halos. At physical endpoints maintain zero global boundary rows. Reuse B's deadlock-safe communication and tags.
-6. Call `poisson::update_local_rows<false>(old,new,rhs_scaled,local_rows,N)` in fixed mode. It has no max-update calculations/reductions. In convergence mode use `<true>`, followed by `MPI_Allreduce(...MPI_MAX...)` of its thread-reduced maximum on the main thread. Every rank participates and makes the same stopping decision.
-7. Swap buffers only after the local kernel's parallel region has joined. Complete exactly K updates in fixed mode; in convergence mode use `max_update<=tol`, reporting exhausted limits explicitly.
-8. Stop local timers **before** the global timing reduction. `MPI_Reduce(...MPI_MAX...)` supplies rank-0 `solve_seconds`. A rank synchronization immediately before the timers is mandatory; a trailing barrier is unnecessary for max elapsed time and must be consistent if B uses one.
-9. Exchange final **current** halos again outside timing before residual evaluation. Otherwise halos may correspond to the penultimate buffer. Reduce residual/error maxima globally on the main thread.
-10. For CSV export, gather interior rows in rank order using B's nonuniform `MPI_Gatherv` counts/displacements. Root constructs zero boundary rows and writes all N+2 rows; exclude duplicated halos. Check integer count/displacement limits or reject unsupported huge grids. Only root prints the primary JSON.
+Every MPI call is on the initializing/main thread outside worker regions. Each
+local kernel returns only after all threads join. The main thread swaps buffers,
+then in convergence mode performs MPI_Allreduce(MPI_MAX) and tests <=tol. Fixed
+mode does exactly K updates with no convergence work/reductions in the loop.
 
-The prepared kernel creates and joins an OpenMP region for each local update, with `schedule(static)`. This is a simple FUNNELED design: all MPI is between parallel regions and always on the main thread. The OpenMP-only solver instead uses a persistent region to amortize repeated team setup. Keep this design difference explicit when interpreting small-grid hybrid overhead. Add a Makefile rule using the actual MPI compiler and OpenMP flags once integration exists; preserve `-O3`, exclude fast-math.
+Allocation, unscaled forcing construction and team probing precede the timing
+barrier. MPI_Wtime covers each halo exchange, local update/join, swap and required
+convergence reduction. The maximum-rank elapsed time reduction follows the timer.
+Final-current halos are refreshed before diagnostics; residual/error maxima are
+reduced globally. Nonuniform Gatherv uses B's row counts/offsets and root inserts
+zero boundary rows. Only root writes the full CSV and primary JSON; an output
+failure is broadcast before all ranks finalize. Fatal exceptions abort peers.
 
-## Required integration validation
+MPI/hybrid use A/B's strict mode-specific CLI, `n` JSON key, exit 2 for errors and
+3 for non-convergence. The standalone OpenMP interface remains unchanged; tools
+accept either n/N and pass explicit problem/mode/iteration settings.
 
-Run `tests/compare_solvers.py` with Member A's serial solver and independently with B's MPI-only solver as reference. Require N=10/ranks=3, first/last rank boundaries, N=ranks, one rank, odd/even K, fixed and convergence modes, and multiple rank/thread combinations. Add smaller N cases to the comparison script when integrating (its initial N=10 case covers nondivisible gather and final-halo metrics). Run the asymmetric test in all variants after agreeing its optional CLI. Verify fixed mode has no global convergence reduction, and verify rank-0-only output and MPI thread-support failures. These MPI checks have **not** run locally.
+## Actual local validation
 
-Use a single allocated eight-core node first for 8×1,4×2,2×4,1×8. Extend placement across nodes only after recording per-node ranks/threads and validating the launcher; do not pool single-node and multinode results.
+Apple M4 MacBook Air; Apple Clang 21.0.0, CMake 3.24.3 Release -O3,
+Anaconda MPICH 4.3.2 and LLVM OpenMP. These are local functional tests, not Vanda
+Open MPI measurements or performance results.
+
+- Four CTest entries passed: original local rows, original OpenMP numerical suite,
+  new unscaled hybrid kernel test, and A's original serial tests.
+- 494 distributed checks passed: 486 complete-grid numerical comparisons and
+  eight expected-error/no-hang checks.
+- MPI-only versus serial: 98 numerical cases. Hybrid versus serial: 194;
+  hybrid versus MPI-only at matching ranks: 194.
+- Both sine problems, N=10/ranks=3, N=ranks, rank/thread combinations through
+  8x1/4x2/2x4/1x8, fixed K=1/2/31, convergence tol=1e-10 and explicit exhausted
+  convergence were checked. The latter uses tol=1e-15/max-iters=1 for N>=2.
+- Every full CSV shape, finite value, zero boundary and pointwise solution was
+  checked with atol=1e-10/rtol=1e-8. The largest observed grid difference was
+  **0.0** on this local build. Residual/error were independently recomputed from
+  gathered grids, also detecting stale final halos or wrong global metrics.
+- Runtime hybrid thread support/effective team sizes were checked in every
+  hybrid numerical case. Bad CLI, ranks>N and output-overwrite failures exited
+  without hanging. Existing output contents were preserved.
+
+Compact evidence and exact source/binary hashes:
+`results/local/hybrid-integration-20261111/validation-summary.json`.
+Full grids, per-case metrics, commands and stdout/stderr are retained in
+`full-validation.tar.gz` beside it. No local timing is used for a scaling figure.
+
+## Vanda validation and benchmarks pending execution
+
+Follow `report/vanda-runbook.md` using a fresh clone of this new branch.
+`hybrid-validate` reruns the environment smoke, CTest and full serial/MPI/hybrid
+matrix on allocated compute nodes with the verified single-node workaround.
+The `hybrid` benchmark job validates again in its own allocation, then gates
+all timing on the exact binaries, launch mode and covered rank/thread cases.
+Local evidence cannot satisfy that gate.
+
+The prepared eight-worker comparison is 1x8/2x4/4x2/8x1, plus 1x1/2x1/4x1 for
+strong scaling, N=128/256/512/1024 and fixed K=1000. Each has one excluded warm-up
+and three measurements; serial is rebuilt and measured on the same node through
+a one-core-bound launcher. OpenMP affinity diagnostics run only in excluded
+warm-ups for hybrid, while process bindings are logged on every launch. Raw data,
+medians, hardware, PBS allocation and source/compiler/MPI provenance are retained.
+Do not mix these future jobs with B's earlier benchmark hardware/placement.
+
+No Vanda hybrid numerical pass, runtime, speedup or efficiency is claimed yet.
+The per-iteration team entry/join is deliberately simple; its overhead and the
+tradeoff between ranks/threads must be assessed from actual cluster measurements.

@@ -1,0 +1,128 @@
+{
+  "site": "local",
+  "date": "2026-11-11",
+  "passed": true,
+  "checks": 494,
+  "numerical_comparisons": 486,
+  "expected_error_checks": 8,
+  "counts": [
+    {
+      "implementation": "hybrid",
+      "reference": "expected-error",
+      "mode": "expected-error",
+      "checks": 4
+    },
+    {
+      "implementation": "hybrid",
+      "reference": "mpi",
+      "mode": "converge",
+      "checks": 40
+    },
+    {
+      "implementation": "hybrid",
+      "reference": "mpi",
+      "mode": "fixed",
+      "checks": 120
+    },
+    {
+      "implementation": "hybrid",
+      "reference": "mpi",
+      "mode": "limit",
+      "checks": 34
+    },
+    {
+      "implementation": "hybrid",
+      "reference": "serial",
+      "mode": "converge",
+      "checks": 40
+    },
+    {
+      "implementation": "hybrid",
+      "reference": "serial",
+      "mode": "fixed",
+      "checks": 120
+    },
+    {
+      "implementation": "hybrid",
+      "reference": "serial",
+      "mode": "limit",
+      "checks": 34
+    },
+    {
+      "implementation": "mpi",
+      "reference": "expected-error",
+      "mode": "expected-error",
+      "checks": 4
+    },
+    {
+      "implementation": "mpi",
+      "reference": "serial",
+      "mode": "converge",
+      "checks": 20
+    },
+    {
+      "implementation": "mpi",
+      "reference": "serial",
+      "mode": "fixed",
+      "checks": 60
+    },
+    {
+      "implementation": "mpi",
+      "reference": "serial",
+      "mode": "limit",
+      "checks": 18
+    }
+  ],
+  "maximum_grid_difference": 0.0,
+  "hybrid_min_thread_support": 1,
+  "hybrid_max_thread_support": 1,
+  "allocation": {
+    "hostname": "Wens-MacBook-Air-4.local",
+    "nodes": [
+      "Wens-MacBook-Air-4.local"
+    ],
+    "resources": {
+      "Resource_List.ncpus": "8"
+    },
+    "allowed_os_cpus": null
+  },
+  "binary_sha256": {
+    "serial": "6b479928d1262353873f8a9e1ec8563ec69764adef6acdbe1e74bd3ea5cf63ba",
+    "mpi": "26f124135897f8dbd5378624954676201906d98215e8f51510840a9678d45fef",
+    "hybrid": "b61a88b503527816ef689bbc4a1a2a05c06513fce7c16fb844eb947419996dad"
+  },
+  "full_validation_sha256": "e0466577c4c19d90a77970a35cf27b0219327bc37b3447e4d3ca6080a6ec2dad",
+  "full_evidence_directory": "results/runs/hybrid-integration-20261111-local",
+  "full_archive": "results/local/hybrid-integration-20261111/full-validation.tar.gz",
+  "base_commit": "2ea8a5a192a29078ea83852ebc113a86c823ba18",
+  "source_note": "Built/tested before the integration commit; exact source hashes below identify the tested files.",
+  "source_sha256": {
+    "src/hybrid_main.cpp": "dfdaf77cb866708e269118f815aeb328fd70a96dc674d863f321d54d2d6ee94f",
+    "src/hybrid_poisson.cpp": "7ece35fb4166c36d1788431f6add7f9725ca60962a157ece9385fab7202300bf",
+    "src/openmp.cpp": "76554f49e5fdb66f11f269a37c43cd11ccc9104e020a4b4ec69bf0eb08914174",
+    "include/hybrid/hybrid_poisson.hpp": "70acf39212eff44b005cc30a93f0509451ff800eed3ea6b533f06dec4c9ce733",
+    "include/hybrid/local_rows.hpp": "524f92142989461270f4da4cc30c7e5be35c00daa265cf7e86e998ed0c8b5873",
+    "references/mpi/src/mpi_main.cpp": "adc79a380912c9fc2f621dc78185ed34592089bdc7d03433ca9a28ebeaa1ca20",
+    "references/mpi/src/mpi_poisson.cpp": "cdc746a7f77f8cdc91a7610c18f91799336ae40899d33b0fe976b20ed021785c",
+    "references/mpi/include/mpi_poisson.hpp": "e1d117fd8fa0f4b7f2b02c63c2e3963444211ce4aa466c74b5ddd782de2dfb58",
+    "references/serial/src/poisson.cpp": "93407c4565d271b7fe6c1ac534ffbaa07817910816c78ee020bb665cebdef854",
+    "references/serial/src/serial_main.cpp": "3bc0b083b692bc8137f044782efca4fa4d34d515b4c4b7f06e3942447d60c891",
+    "references/serial/include/poisson.hpp": "b43c8fea3bdd816af3513c070dd59051226cffabf34e6693bba11abfeb925f27"
+  },
+  "compiler": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n",
+  "mpi": "HYDRA build details:\n    Version:                                 4.3.2\n    Release Date:                            Mon Oct  6 11:14:20 AM CDT 2025\n    CC:                              arm64-apple-darwin20.0.0-clang -I/opt/anaconda3/include  -mmacosx-version-min=12.1 -I/opt/anaconda3/include -ftree-vectorize -fPIC -fstack-protector-strong -O2 -pipe -isystem /opt/anaconda3/include -fdebug-prefix-map=/opt/miniconda3/conda-bld/mpich-mpi_1763470256620/work=/usr/local/src/conda/mpich-4.3.2 -fdebug-prefix-map=/opt/anaconda3=/usr/local/src/conda-prefix -L/opt/anaconda3/lib -Wl,-rpath,/opt/anaconda3/lib -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-rpath,/opt/anaconda3/lib -L/opt/anaconda3/lib  \n",
+  "build_type": "Release",
+  "optimization": "-O3; no fast-math",
+  "cpu_binding": "No explicit local binding; correctness tests, not performance results",
+  "ctest": {
+    "passed": 4,
+    "total": 4,
+    "tests": [
+      "local_rows",
+      "openmp_numerical",
+      "hybrid_local_rows",
+      "serial_correctness"
+    ]
+  },
+  "claims": "Local MPI/hybrid numerical validation only. No new Vanda hybrid measurements."
+}

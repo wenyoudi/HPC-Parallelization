@@ -2,9 +2,9 @@
 # Run only in the fresh feature-branch checkout created by the runbook.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-[[ $(git branch --show-current) == feature/openmp-hybrid ]] || {
-    echo 'Expected a dedicated feature/openmp-hybrid checkout.' >&2; exit 1;
-}
+case "$(git branch --show-current)" in feature/openmp-hybrid|codex/hybrid-mpi-integration) ;; *)
+    echo 'Expected the isolated OpenMP or hybrid integration feature checkout.' >&2; exit 1;;
+esac
 source scripts/vanda-env.sh
 root=$(pwd -P)
 if [[ -f .vanda-openmp-workspace ]]; then
@@ -20,4 +20,4 @@ python3 --version > "$out/python.txt"
 mpicxx --showme > "$out/mpi-wrapper.txt"
 printf '%s\n' "$root" > .vanda-openmp-workspace
 echo "Prepared separate workspace: $root"
-echo 'Next: bash scripts/submit_vanda.sh openmp-validate'
+echo 'Next: bash scripts/submit_vanda.sh hybrid-validate (or openmp-validate)'

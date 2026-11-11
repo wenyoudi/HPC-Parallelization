@@ -12,7 +12,7 @@ from pbs_allocation import inspect_allocation
 
 p=argparse.ArgumentParser()
 p.add_argument("--reference", required=True)
-p.add_argument("--candidate", default="build/hybrid")
+p.add_argument("--candidate", default="build/distributed/hybrid")
 p.add_argument("--launcher-json", help="Local custom launcher only; PBS uses --launcher-mode")
 p.add_argument("--launcher-mode", choices=MODES, default=os.environ.get("VANDA_MPI_LAUNCHER","single-node"))
 p.add_argument("--allocated-cpus", type=int, default=os.cpu_count() or 1, help="Local test CPU budget")

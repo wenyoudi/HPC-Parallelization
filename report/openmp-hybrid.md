@@ -1,5 +1,7 @@
 # OpenMP and hybrid contribution — draft for group integration
 
+**11 November update:** the separate hybrid solver is now integrated on `codex/hybrid-mpi-integration` using B's exact public decomposition/halo functions. Four CTest entries and 494 local MPI/hybrid checks passed; see [hybrid-integration.md](hybrid-integration.md). B's upstream Vanda receipt reports 162 MPI checks, while new Vanda hybrid validation/measurements remain pending. The dated OpenMP design/results below are preserved.
+
 Status: OpenMP implemented and validated locally on 9 November 2026. Hybrid integration awaits Member B's MPI framework. Vanda measurements remain outstanding. Member A should insert group names/IDs and integrate these sections into the final PDF; no placeholder performance results should be presented as measured data.
 
 ## Shared-memory design

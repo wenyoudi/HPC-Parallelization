@@ -23,11 +23,11 @@ class ValidationGateTests(unittest.TestCase):
             hybrid.write_bytes(b"hybrid fixture, not executable")
             log=root/"fixture-build.log"
             log.write_text("unit test fixture; no compilation or measurements\n")
-            valid=dict(passed=True,launcher_mode="single-node",binary_sha256={
+            valid=dict(passed=True,site="vanda",launcher_mode="single-node",binary_sha256={
                 "serial":hashlib.sha256(serial.read_bytes()).hexdigest(),
                 "hybrid":hashlib.sha256(hybrid.read_bytes()).hexdigest()},
                 checks=[dict(passed=True,implementation="hybrid",mpi_ranks=4,omp_threads=2)])
-            failures=[None,dict(valid,passed=False),dict(valid,launcher_mode="pbs"),
+            failures=[None,dict(valid,passed=False),dict(valid,site="local"),dict(valid,launcher_mode="pbs"),
                       dict(valid,binary_sha256={}),dict(valid,checks=[dict(passed=True,implementation="hybrid",mpi_ranks=1,omp_threads=8)])]
             for i,report in enumerate(failures):
                 argv=["benchmark.py","--kind","hybrid","--site","vanda","--solver",str(hybrid),
