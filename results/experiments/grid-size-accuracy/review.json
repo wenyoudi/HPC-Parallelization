@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "archive_sha256": "b25ab11e982736624fac7c2d06f3fe07457c8916c4a545db9b92af9b63b4171b",
+  "checks": [
+    {
+      "problem": "symmetric",
+      "n": 15,
+      "passed": true,
+      "error_linf": 0.0032189644350437696,
+      "iteration_error_fraction": 1.5644005048314187e-09,
+      "residual_linf_recomputed": 9.912781706589158e-11
+    },
+    {
+      "problem": "symmetric",
+      "n": 31,
+      "passed": true,
+      "error_linf": 0.000803577658793353,
+      "iteration_error_fraction": 2.5609063651349435e-08,
+      "residual_linf_recomputed": 4.063096525896981e-10
+    },
+    {
+      "problem": "symmetric",
+      "n": 63,
+      "passed": true,
+      "error_linf": 0.0002008217267983614,
+      "iteration_error_fraction": 4.128353816500291e-07,
+      "residual_linf_recomputed": 1.6387886603297375e-09
+    },
+    {
+      "problem": "symmetric",
+      "n": 127,
+      "passed": true,
+      "error_linf": 5.020058413274242e-05,
+      "iteration_error_fraction": 6.6091830438894115e-06,
+      "residual_linf_recomputed": 6.551879039307096e-09
+    },
+    {
+      "problem": "asymmetric",
+      "n": 15,
+      "passed": true,
+      "error_linf": 0.010989314918715465,
+      "iteration_error_fraction": 1.7990977385949387e-10,
+      "residual_linf_recomputed": 9.64206492426456e-11
+    },
+    {
+      "problem": "asymmetric",
+      "n": 31,
+      "passed": true,
+      "error_linf": 0.002734954824313629,
+      "iteration_error_fraction": 2.999397206425528e-09,
+      "residual_linf_recomputed": 4.036309064758825e-10
+    },
+    {
+      "problem": "asymmetric",
+      "n": 63,
+      "passed": true,
+      "error_linf": 0.0006829683607219028,
+      "iteration_error_fraction": 4.8392358366861016e-08,
+      "residual_linf_recomputed": 1.631335067031614e-09
+    },
+    {
+      "problem": "asymmetric",
+      "n": 127,
+      "passed": true,
+      "error_linf": 0.0001706938691328208,
+      "iteration_error_fraction": 7.747339575864971e-07,
+      "residual_linf_recomputed": 6.559886855939112e-09
+    }
+  ],
+  "review": "Independent saved-grid error, boundary and residual checks; no solver rerun"
+}

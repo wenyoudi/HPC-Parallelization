@@ -1,0 +1,20 @@
+{
+  "site": "vanda",
+  "hostname": "CN-148",
+  "job_id": "1543242.stdct-mgmt-02",
+  "utc": "2026-11-11T15:15:17.933817+00:00",
+  "arguments": {
+    "executable": "results/hpc/grid-refinement-1543242.stdct-mgmt-02/build/poisson_serial",
+    "output_dir": "results/hpc/grid-refinement-1543242.stdct-mgmt-02/measurements",
+    "sizes": [
+      15,
+      31,
+      63,
+      127
+    ],
+    "tol": 1e-13,
+    "max_iters": 500000,
+    "local_smoke": false
+  },
+  "binary_sha256": "660531c78de21f66fb0f64e857780ed40bb0ebccfca75909c006f54416d53c96"
+}

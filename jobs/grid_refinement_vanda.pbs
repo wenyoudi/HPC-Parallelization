@@ -1,0 +1,37 @@
+#!/bin/bash -l
+#PBS -N poisson_grid
+#PBS -l select=1:ncpus=1:mem=4gb
+#PBS -l walltime=01:00:00
+#PBS -j oe
+set -euo pipefail
+: "${PBS_JOBID:?Submit through qsub}"
+cd "${PBS_O_WORKDIR:?Missing submission directory}"
+source "${HPC_SETUP:-config/vanda_serial_env.sh}"
+export OMP_NUM_THREADS=1
+RUN_DIR="results/hpc/grid-refinement-${PBS_JOBID}"
+mkdir -p "$RUN_DIR"
+exec > >(tee "$RUN_DIR/job.log") 2>&1
+hostname
+module list
+g++ --version
+cmake --version
+python3 --version
+qstat -f "$PBS_JOBID" > "$RUN_DIR/allocation.txt"
+lscpu > "$RUN_DIR/cpu.txt"
+# Source-only uploads need not include .git; hashes below identify the actual files.
+if git rev-parse --verify HEAD > "$RUN_DIR/source-commit.txt" 2> "$RUN_DIR/git-provenance-error.txt"; then
+  git status --porcelain > "$RUN_DIR/source-status.txt"
+else
+  printf 'Unavailable: no readable Git commit; see source-sha256.txt.\n' > "$RUN_DIR/source-commit.txt"
+  printf 'Unavailable: source-only upload or unreadable Git metadata.\n' > "$RUN_DIR/source-status.txt"
+fi
+sha256sum src/poisson.cpp src/serial_main.cpp include/poisson.hpp scripts/grid_refinement.py scripts/compare_solutions.py CMakeLists.txt jobs/grid_refinement_vanda.pbs > "$RUN_DIR/source-sha256.txt"
+cmake -S . -B "$RUN_DIR/build" -DCMAKE_BUILD_TYPE=Release
+cmake --build "$RUN_DIR/build" --parallel 1
+# Run experiments directly; the completed validation suite is not repeated here.
+python3 scripts/grid_refinement.py --executable "$RUN_DIR/build/poisson_serial" \
+  --output-dir "$RUN_DIR/measurements"
+# Small portable evidence bundle; omit the build directory.
+tar -czf "$RUN_DIR/results.tar.gz" -C "$RUN_DIR" measurements allocation.txt cpu.txt \
+  source-commit.txt source-status.txt source-sha256.txt git-provenance-error.txt
+printf 'Results: %s/results.tar.gz\n' "$PWD/$RUN_DIR"

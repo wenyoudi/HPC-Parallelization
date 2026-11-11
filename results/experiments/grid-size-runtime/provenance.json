@@ -1,0 +1,7 @@
+{
+  "archive": "hybrid-vanda-results-1541184.tar.gz",
+  "archive_sha256": "616e5478b5b308d005e0f4f7250c3abccb578198069351edf717bed02b130d2a",
+  "job": "1541184.stdct-mgmt-02",
+  "hostname": "CN-140",
+  "note": "Reused contributor-provided Vanda serial measurements; no new solver execution"
+}

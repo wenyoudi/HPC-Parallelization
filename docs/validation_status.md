@@ -39,7 +39,13 @@ pairs re-compared, all identical; eight expected-error outcomes reviewed. See th
 
 ## Pending
 
-- Serial grid-size experiments and figures; consolidated scaling analysis and report.
+- Consolidated scaling analysis and final report.
 - Integration of parallel implementations into the shared final checkout.
 
 Local review of archived Vanda outputs is not a new HPC performance experiment.
+
+## Grid-size experiments completed
+
+Vanda refinement job 1543242 supplied eight converged cases, independently checked
+from saved grids. Fixed-work runtime figures reuse job 1541184 serial measurements.
+See [the experiment report](grid_size_experiments.md) for results and provenance.

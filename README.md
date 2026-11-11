@@ -243,6 +243,14 @@ results are for correctness checks only. Large generated run directories are ign
 by Git; curated experimental records and figures should be added deliberately when
 available. No completed parallel scaling results are reported in this checkout.
 
+## Grid-size experiments
+
+See [the grid-size experiment guide](docs/grid_size_experiments.md) for reused Vanda
+serial runtime data, the new spatial-refinement PBS job, and plotting commands.
+Runtime figures and their source records are under `results/experiments/grid-size-runtime/`;
+completed Vanda spatial-refinement evidence and figures are under
+`results/experiments/grid-size-accuracy/`.
+
 ## Repository structure
 
 ```text
