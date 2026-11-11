@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "openmp_recorded_cases_reviewed": 16,
+  "openmp_max_recorded_grid_difference": 4.440892098500626e-16,
+  "openmp_raw_grids_rechecked": false,
+  "mpi_recorded_checks": 162,
+  "mpi_grid_pairs_rechecked": 144,
+  "mpi_max_grid_difference": 0.0,
+  "hybrid": "pending",
+  "solver_runs_performed": 0
+}

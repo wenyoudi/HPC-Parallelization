@@ -24,14 +24,22 @@ Date: 9 November 2026. Branch: serial-baseline-and-validation.
 The executable and temporary checks were built under /tmp, not committed. To repeat
 core validation, follow the build and CTest commands in the root README.
 
+## Vanda serial validation
+
+Job 1535699 completed successfully on GN-A40-075; serial_correctness passed.
+GCC 11.3.0, CMake 3.24.3 and Python 3.9.18 were recorded. See the
+[original log](../results/validation/vanda_serial_1535699.log).
+
+## Cross-implementation review (11 November 2026)
+
+OpenMP: 16 recorded comparisons reviewed. MPI: 144 exported grid pairs independently
+re-compared, plus 18 additional recorded checks. See the
+[stage-two review](stage2_validation.md) for coverage, provenance and limitations.
+
 ## Pending
 
-- Group review of the version-1 interface contract, especially row=y/column=x and
-  optional asymmetric problem selection.
-- MPI, OpenMP and hybrid integration; full-grid cross-implementation checks including
-  N=10 with three ranks.
-- Agreed HPC compiler/modules, scheduler allocation, core binding and compute-node trial.
-- Actual Vanda/Atlas timing runs, scaling and grid-size figures, final report.
+- Hybrid correctness evidence and review.
+- Serial grid-size experiments and figures; consolidated scaling analysis and report.
+- Integration of parallel implementations into the shared final checkout.
 
-No Vanda job has been submitted by this work. No local timing is used as a substitute
-for required HPC performance results. No commits, pushes or pull requests were made.
+Local review of archived Vanda outputs is not a new HPC performance experiment.

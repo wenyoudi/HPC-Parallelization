@@ -1,0 +1,31 @@
+{
+  "job_id": "1537318.stdct-mgmt-02",
+  "hostname": "GN-A40-075",
+  "nodes": [
+    "gn-a40-075.stdct.loc"
+  ],
+  "resources": {
+    "job_state": "R",
+    "queue": "batch_cpu",
+    "exec_host": "GN-A40-075/4*8",
+    "exec_vnode": "(GN-A40-075[1]:ncpus=8:mem=55gb)",
+    "Resource_List.mem": "55gb",
+    "Resource_List.ncpus": "8",
+    "Resource_List.nodect": "1",
+    "Resource_List.place": "shared",
+    "Resource_List.select": "1:ncpus=8:mpiprocs=1:ompthreads=8:mem=55GB",
+    "Resource_List.walltime": "00:10:00"
+  },
+  "allowed_os_cpus": [
+    57,
+    59,
+    61,
+    63,
+    65,
+    67,
+    69,
+    71
+  ],
+  "visible_physical_cores": 8,
+  "requested_cpus": 8
+}

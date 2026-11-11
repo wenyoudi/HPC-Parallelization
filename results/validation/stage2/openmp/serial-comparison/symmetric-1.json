@@ -1,0 +1,151 @@
+{
+  "passed": true,
+  "atol": 1e-10,
+  "rtol": 1e-08,
+  "cases": [
+    {
+      "mode": "fixed",
+      "n": 10,
+      "iterations": 31,
+      "ranks": 1,
+      "threads": 1,
+      "commands": [
+        [
+          "/nfs/home/svu/e0969984/project3-openmp-vanda.bPdbhrnt/repo/results/vanda/job-serial-compare-20261110T152132Z-2448081/build/references/serial/poisson_serial",
+          "--n",
+          "10",
+          "--mode",
+          "fixed",
+          "--output",
+          "/var/tmp/pbs.1537318.stdct-mgmt-02/tmp49ni6_4i/fixed-ref.csv",
+          "--iterations",
+          "31"
+        ],
+        [
+          "/nfs/home/svu/e0969984/project3-openmp-vanda.bPdbhrnt/repo/results/vanda/job-serial-compare-20261110T152132Z-2448081/build/openmp",
+          "--n",
+          "10",
+          "--mode",
+          "fixed",
+          "--output",
+          "/var/tmp/pbs.1537318.stdct-mgmt-02/tmp49ni6_4i/fixed-candidate.csv",
+          "--iterations",
+          "31"
+        ]
+      ],
+      "diagnostics": [
+        {
+          "stdout": "{\"schema_version\":1,\"implementation\":\"serial\",\"n\":10,\"mode\":\"fixed\",\"problem\":\"symmetric\",\"mpi_ranks\":1,\"omp_threads\":1,\"iterations_completed\":31,\"converged\":null,\"max_update\":null,\"tol\":null,\"solve_seconds\":3.76e-06,\"residual_linf\":5.3670941864111548,\"error_linf\":0.2670690744259222}\n",
+          "stderr": ""
+        },
+        {
+          "stdout": "{\"implementation\":\"openmp\",\"N\":10,\"mode\":\"fixed\",\"mpi_ranks\":1,\"omp_threads\":1,\"iterations_completed\":31,\"converged\":null,\"solve_seconds\":1.4194e-05,\"max_update\":null,\"residual_linf\":5.3670941864111779,\"error_linf\":0.26706907442592198,\"problem\":\"symmetric\"}\n",
+          "stderr": ""
+        }
+      ],
+      "reference": {
+        "schema_version": 1,
+        "implementation": "serial",
+        "n": 10,
+        "mode": "fixed",
+        "problem": "symmetric",
+        "mpi_ranks": 1,
+        "omp_threads": 1,
+        "iterations_completed": 31,
+        "converged": null,
+        "max_update": null,
+        "tol": null,
+        "solve_seconds": 3.76e-06,
+        "residual_linf": 5.367094186411155,
+        "error_linf": 0.2670690744259222
+      },
+      "candidate": {
+        "implementation": "openmp",
+        "N": 10,
+        "mode": "fixed",
+        "mpi_ranks": 1,
+        "omp_threads": 1,
+        "iterations_completed": 31,
+        "converged": null,
+        "solve_seconds": 1.4194e-05,
+        "max_update": null,
+        "residual_linf": 5.367094186411178,
+        "error_linf": 0.267069074425922,
+        "problem": "symmetric"
+      },
+      "max_absolute_difference": 1.6653345369377348e-16
+    },
+    {
+      "mode": "converge",
+      "n": 10,
+      "iterations": null,
+      "ranks": 1,
+      "threads": 1,
+      "commands": [
+        [
+          "/nfs/home/svu/e0969984/project3-openmp-vanda.bPdbhrnt/repo/results/vanda/job-serial-compare-20261110T152132Z-2448081/build/references/serial/poisson_serial",
+          "--n",
+          "10",
+          "--mode",
+          "converge",
+          "--output",
+          "/var/tmp/pbs.1537318.stdct-mgmt-02/tmp49ni6_4i/converge-ref.csv",
+          "--tol",
+          "1e-10"
+        ],
+        [
+          "/nfs/home/svu/e0969984/project3-openmp-vanda.bPdbhrnt/repo/results/vanda/job-serial-compare-20261110T152132Z-2448081/build/openmp",
+          "--n",
+          "10",
+          "--mode",
+          "converge",
+          "--output",
+          "/var/tmp/pbs.1537318.stdct-mgmt-02/tmp49ni6_4i/converge-candidate.csv",
+          "--tol",
+          "1e-10"
+        ]
+      ],
+      "diagnostics": [
+        {
+          "stdout": "{\"schema_version\":1,\"implementation\":\"serial\",\"n\":10,\"mode\":\"converge\",\"problem\":\"symmetric\",\"mpi_ranks\":1,\"omp_threads\":1,\"iterations_completed\":480,\"converged\":true,\"max_update\":9.9912522699696638e-11,\"tol\":1e-10,\"solve_seconds\":7.0499000000000004e-05,\"residual_linf\":4.639883144363921e-08,\"error_linf\":0.0066868259413566111}\n",
+          "stderr": ""
+        },
+        {
+          "stdout": "{\"implementation\":\"openmp\",\"N\":10,\"mode\":\"converge\",\"mpi_ranks\":1,\"omp_threads\":1,\"iterations_completed\":480,\"converged\":true,\"solve_seconds\":0.000267359,\"max_update\":9.9912522699696638e-11,\"residual_linf\":4.639883144363921e-08,\"error_linf\":0.0066868259413566111,\"problem\":\"symmetric\"}\n",
+          "stderr": ""
+        }
+      ],
+      "reference": {
+        "schema_version": 1,
+        "implementation": "serial",
+        "n": 10,
+        "mode": "converge",
+        "problem": "symmetric",
+        "mpi_ranks": 1,
+        "omp_threads": 1,
+        "iterations_completed": 480,
+        "converged": true,
+        "max_update": 9.991252269969664e-11,
+        "tol": 1e-10,
+        "solve_seconds": 7.0499e-05,
+        "residual_linf": 4.639883144363921e-08,
+        "error_linf": 0.006686825941356611
+      },
+      "candidate": {
+        "implementation": "openmp",
+        "N": 10,
+        "mode": "converge",
+        "mpi_ranks": 1,
+        "omp_threads": 1,
+        "iterations_completed": 480,
+        "converged": true,
+        "solve_seconds": 0.000267359,
+        "max_update": 9.991252269969664e-11,
+        "residual_linf": 4.639883144363921e-08,
+        "error_linf": 0.006686825941356611,
+        "problem": "symmetric"
+      },
+      "max_absolute_difference": 1.6653345369377348e-16
+    }
+  ]
+}

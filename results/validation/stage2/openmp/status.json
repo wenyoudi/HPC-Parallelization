@@ -1,0 +1,9 @@
+{
+  "job_id": "1537318.stdct-mgmt-02",
+  "kind": "serial-compare",
+  "exit_status": 0,
+  "success": true,
+  "phase": "complete",
+  "hostname": "GN-A40-075",
+  "finished_utc": "2026-11-10T15:23:16.136378+00:00"
+}

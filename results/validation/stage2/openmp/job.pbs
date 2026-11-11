@@ -1,0 +1,22 @@
+#!/bin/bash -l
+#PBS -N p3-serial-cmp
+#PBS -l select=1:ncpus=8:mpiprocs=1:ompthreads=8:mem=4gb
+#PBS -l place=shared
+#PBS -l walltime=00:30:00
+#PBS -j oe
+set -euo pipefail
+cd /nfs/home/svu/e0969984/project3-openmp-vanda.bPdbhrnt/repo/results/vanda/job-serial-compare-20261110T152132Z-2448081
+python3 - <<'VERIFY_PY'
+import hashlib, json
+from pathlib import Path
+expected=json.loads(Path("source-provenance.json").read_text())["archive_sha256"]
+if hashlib.sha256(Path("source.tar.gz").read_bytes()).hexdigest()!=expected:
+    raise SystemExit("Submitted source archive checksum mismatch")
+VERIFY_PY
+mkdir source
+tar -xzf source.tar.gz -C source
+export BENCH_KIND=serial-compare
+export VANDA_CPUS=8
+export VANDA_MPI_LAUNCHER=single-node
+export VANDA_JOB_DIR=/nfs/home/svu/e0969984/project3-openmp-vanda.bPdbhrnt/repo/results/vanda/job-serial-compare-20261110T152132Z-2448081
+source source/scripts/run_vanda_job.sh

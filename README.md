@@ -19,12 +19,16 @@ the parallel design.
 | Numerical tests and full-grid comparison tool | Available |
 | Serial benchmark collection and PBS workflow | Available; formal benchmark results pending |
 | MPI-only, OpenMP-only, and hybrid implementations | Pending integration |
-| Parallel validation, scaling results, and final report | Pending completion |
+| OpenMP and MPI validation evidence | Reviewed; see stage-two validation report |
+| Hybrid validation, consolidated scaling results, and final report | Pending completion |
 
 Commands below apply to the files currently included in this checkout. Parallel
 build targets and launch commands will be documented when those implementations
 are integrated. Detailed verification records are maintained in
 [docs/validation_status.md](docs/validation_status.md).
+The [stage-two review](docs/stage2_validation.md) documents the archived OpenMP/MPI
+checks. Reproduce the evidence audit with `python3 scripts/review_stage2.py`
+without rerunning solvers or benchmarks.
 
 ## Mathematical problem
 
