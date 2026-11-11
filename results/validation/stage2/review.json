@@ -6,6 +6,19 @@
   "mpi_recorded_checks": 162,
   "mpi_grid_pairs_rechecked": 144,
   "mpi_max_grid_difference": 0.0,
-  "hybrid": "pending",
+  "hybrid": {
+    "status": "passed",
+    "site": "vanda",
+    "job_id": "1541184.stdct-mgmt-02",
+    "recorded_checks": 494,
+    "grid_pairs_rechecked": 486,
+    "comparisons": {
+      "hybrid_vs_mpi": 194,
+      "hybrid_vs_serial": 194,
+      "mpi_vs_serial": 98
+    },
+    "max_grid_difference": 0.0,
+    "expected_error_checks_reviewed": 8
+  },
   "solver_runs_performed": 0
 }

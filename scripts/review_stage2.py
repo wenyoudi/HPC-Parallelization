@@ -3,6 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 from compare_solutions import read_grid
+from review_hybrid_evidence import review_hybrid
 
 
 def require(condition, message):
@@ -66,7 +67,7 @@ def main():
         "openmp_max_recorded_grid_difference": max(c["max_absolute_difference"] for c in omp_cases),
         "openmp_raw_grids_rechecked": False, "mpi_recorded_checks": len(data["checks"]),
         "mpi_grid_pairs_rechecked": pairs, "mpi_max_grid_difference": maximum,
-        "hybrid": "pending", "solver_runs_performed": 0}, indent=2))
+        "hybrid": review_hybrid(base / "hybrid-vanda-results-1541184.tar.gz"), "solver_runs_performed": 0}, indent=2))
 
 
 if __name__ == "__main__":

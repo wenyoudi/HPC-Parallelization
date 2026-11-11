@@ -33,12 +33,12 @@ GCC 11.3.0, CMake 3.24.3 and Python 3.9.18 were recorded. See the
 ## Cross-implementation review (11 November 2026)
 
 OpenMP: 16 recorded comparisons reviewed. MPI: 144 exported grid pairs independently
-re-compared, plus 18 additional recorded checks. See the
+re-compared, plus 18 additional recorded checks. Hybrid job 1541184: 486 additional grid
+pairs re-compared, all identical; eight expected-error outcomes reviewed. See the
 [stage-two review](stage2_validation.md) for coverage, provenance and limitations.
 
 ## Pending
 
-- Hybrid correctness evidence and review.
 - Serial grid-size experiments and figures; consolidated scaling analysis and report.
 - Integration of parallel implementations into the shared final checkout.
 

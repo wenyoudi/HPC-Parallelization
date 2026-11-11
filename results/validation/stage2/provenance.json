@@ -5,7 +5,7 @@
   "mpi_repository": "https://github.com/wenyoudi/HPC-Parallelization",
   "mpi_commit": "1756effac3929c873e56624314fea54ca5155863",
   "mpi_source_directory": "results/hpc/mpi-1539665.stdct-mgmt-02/validation/",
-  "scope": "Review of existing Vanda results; no solver or benchmark rerun. Hybrid pending.",
+  "scope": "Review of existing Vanda serial/OpenMP/MPI/hybrid evidence; no solver or benchmark rerun.",
   "sha256": {
     "mpi/grids/n1-r1-asymmetric-converge-0-mpi.csv": "2e3ad5cb1245e8cf3cdf582d740fbc1154f4dcbba1672fc9f92224c014a07804",
     "mpi/grids/n1-r1-asymmetric-converge-0-serial.csv": "2e3ad5cb1245e8cf3cdf582d740fbc1154f4dcbba1672fc9f92224c014a07804",
@@ -308,6 +308,8 @@
     "openmp/serial-comparison/symmetric-4.json": "13373d5ac4cca9a5b5880ac993ea65d126bc29a7b30773c99b90d34a1eba8346",
     "openmp/serial-comparison/symmetric-8.json": "52f7a14a172aeaebe4650e62309de85fe73c54f6f8675c71672bdb36cb5408c2",
     "openmp/status.json": "0e3f56c3d6dd5410bc1e41bf9e337877303184ecebe4d64a6aad70d89c1d4b31",
-    "openmp/validation.log": "a70c8ad21f6e3c1131c40037f7a2e0a826e8b0718b6908f812da4b04cecec34d"
-  }
+    "openmp/validation.log": "a70c8ad21f6e3c1131c40037f7a2e0a826e8b0718b6908f812da4b04cecec34d",
+    "hybrid-vanda-results-1541184.tar.gz": "616e5478b5b308d005e0f4f7250c3abccb578198069351edf717bed02b130d2a"
+  },
+  "hybrid_source_archive": "hybrid-vanda-results-1541184.tar.gz"
 }

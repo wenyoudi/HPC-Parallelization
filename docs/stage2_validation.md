@@ -1,7 +1,6 @@
 # Serial and parallel validation review
 
-Review date: 11 November 2026. Scope: the available OpenMP and MPI evidence.
-Hybrid validation remains pending and is not represented as completed.
+Review date: 11 November 2026. Scope: the available OpenMP, MPI and Vanda hybrid evidence.
 
 ## Results
 
@@ -11,9 +10,10 @@ Hybrid validation remains pending and is not represented as completed.
 | OpenMP vs serial | 1537318 | 16 recorded comparisons | All reported passing; largest recorded grid difference 4.440892098500626e-16 |
 | MPI vs serial | 1539665 | 144 full-grid pairs independently re-compared locally | All passed; maximum absolute difference 0 |
 | MPI additional checks | 1539665 | 15 invalid-input and 3 refinement records | All reported passing |
-| Hybrid vs serial | Pending | No evidence included in this review | Pending |
+| Hybrid/MPI/serial cross-checks | 1541184 | 486 complete-grid pairs independently re-compared | All passed; maximum absolute difference 0 |
 
-Both parallel validation jobs identify Vanda node GN-A40-075. The comparison rule
+The earlier OpenMP and MPI validation jobs identify Vanda node GN-A40-075.
+The hybrid validation job ran on CN-140. The comparison rule
 is abs(candidate-reference) <= 1e-10 + 1e-8*abs(reference).
 These differences measure agreement between implementations, not error against
 the continuous manufactured solution. Small-grid validation timings are not scaling
@@ -61,19 +61,45 @@ python3 scripts/review_stage2.py
 ```
 
 This command verifies archived file checksums, checks OpenMP record consistency,
-and re-compares the MPI CSV pairs. It requires neither MPI nor a solver build and
+and re-compares the MPI and hybrid archive CSV pairs. It requires neither MPI nor a solver build and
 does not rerun HPC jobs. The recorded review output is stored alongside the evidence.
 Original MPI command paths refer to the submitting contributor's environment;
 they are provenance, not portable run instructions.
 
 ## Handoff and remaining work
 
-The available OpenMP/MPI portion of the second-stage review is complete. Retain
-these records for the correctness section of the report. When hybrid results are
-available, review corresponding serial comparisons, rank/thread configurations,
-nondivisible decomposition, both problems and both modes, and add their evidence.
-Grid-size experiments and performance figures remain separate third-stage work.
+The second-stage review of the supplied OpenMP, MPI and hybrid evidence is complete.
+Retain these records for the correctness section of the report. This establishes
+agreement for the tested cases, not a proof for all possible inputs. Grid-size
+experiments and performance figures remain separate third-stage work.
 
 Evidence was collected by the contributing implementation owners. This review used
 AI assistance to inspect and organise records and implement a reproducible checker;
 no additional solver or performance runs were performed during the review.
+
+## Vanda hybrid evidence added
+
+The original `hybrid-vanda-results-1541184.tar.gz` is preserved without modification
+under `results/validation/stage2/`, with its SHA-256 in provenance.json. The checker
+reads it in memory without extracting or executing its contents.
+
+Job 1541184 completed with exit status 0 on CN-140, with 8 allocated CPUs and
+55 GB memory. Four CTest entries passed. The distributed receipt records 494
+successful checks: 486 numerical comparisons and eight expected-error checks.
+The independent review re-compared all 486 grid pairs: hybrid versus serial (194),
+hybrid versus MPI (194), and MPI versus serial (98). Shapes, finite values, zero
+boundaries, matching parameters and iteration counts were checked; the maximum
+stored-grid difference is zero. Runtime records indicate sufficient FUNNELED
+thread support and matching rank/thread counts.
+
+Coverage includes symmetric/asymmetric forcing, N=10 with three ranks, N=ranks,
+fixed K=1/2/31, convergence and iteration-limit cases, and layouts 1x8/2x4/4x2/8x1.
+The eight expected-error outcomes are reviewed from the receipt, not rerun.
+The source receipt records clean commit 7a6b6e7b04fc6b7a1a9f172503dcf7b6b03e9fd8.
+The submitted source archive is not included; source provenance is recorded rather
+than independently reconstructed from these result files.
+
+The original package also contains 96 performance measurements and analysis output.
+They are retained to preserve the supplied archive, but this review does not audit
+speedup/efficiency calculations. CN-140 differs from the earlier GN-A40-075 node;
+measurements across those jobs must not be combined as a controlled scaling series.
