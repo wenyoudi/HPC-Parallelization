@@ -30,6 +30,40 @@ sizes and MPI FUNNELED support passed. Four CTest entries passed too. See
 `results/local/hybrid-integration-20261111/` for summary/hashes and full evidence.
 These are local correctness tests, **not Vanda hybrid measurements**.
 
+The user reported hybrid job **1540875** on CN-151 passing all four CTest
+suites, MPI smoke at 1/2/4/8 ranks, and the first 312 distributed numerical
+comparisons. Check 313 stopped before solver execution/grid comparison because
+a repeated `qstat -f` allocation query timed out. This is an infrastructure
+failure and partial validation, **not a completed Vanda hybrid pass**. Preserve
+that job's evidence. The allocation-query fix below requires a new full run;
+it does not skip or relax any numerical checks.
+
+## Rerun after the allocation-query fix
+
+In your authenticated Vanda shell, `cd` to the **existing isolated hybrid
+clone** used for job 1540875 (leave Person A's and OpenMP directories untouched).
+Confirm the branch is `codex/hybrid-mpi-integration` and the working tree is
+clean, then run:
+
+```bash
+git branch --show-current
+git status --short
+git pull --ff-only origin codex/hybrid-mpi-integration
+bash -l "$PWD/scripts/setup_vanda.sh"
+VANDA_MPI_LAUNCHER=single-node \
+  bash -l "$PWD/scripts/submit_vanda.sh" hybrid-validate
+validation_dir=$(cat results/vanda/latest-hybrid-validate.txt)
+validation_id=$(cat "$validation_dir/job-id.txt")
+qstat "$validation_id"
+```
+
+If the branch/working tree check differs, preserve those changes before updating;
+do not reset or remove old results. Submission creates a new source archive and
+job directory. It does not reuse or overwrite job 1540875. After completion,
+inspect `status.json` and `distributed-validation/validation.json` using section 2
+below; require the complete 494-check pass before submitting benchmarks.
+Archive/download the new evidence using section 5.
+
 ## 1. Create a new isolated checkout on Vanda
 
 In your already authenticated Vanda SSH shell:
@@ -89,6 +123,30 @@ The longer hybrid walltime accommodates direct comparisons with both serial and
 MPI-only; B's successful upstream queue allocation also allowed one hour.
 Site-normalized resources (including any memory change to 55 GB) are captured
 from actual PBS records; they are not assumed to match the request text.
+
+At job startup, `pbs_allocation.py --refresh` queries `qstat -f "$PBS_JOBID"`
+and verifies running state, single-node identity, actual `Resource_List.ncpus`,
+OS affinity and visible physical-core capacity. Scheduler timeouts/nonzero
+responses get at most three attempts, each with a 15-second timeout and 1/2-second
+delays (48-second total timeout budget). Exhaustion, a missing scheduler, or an
+invalid successful response fails the job; requested CPUs are never substituted.
+
+The verified, filtered record is saved once as `allocation.json`, including its
+verification time, nodefile SHA-256 and query-attempt count. The job exports
+`VANDA_ALLOCATION_SNAPSHOT` and `VANDA_ALLOCATION_SHA256` to discovery, smoke,
+validation, every child comparison and benchmarking. Each consumer verifies the
+checksum, job ID, host and nodefile against the current job and rechecks live
+affinity/physical-core limits. A narrower current cpuset lowers the available
+budget; a widened/unverifiable mask or changed/corrupt cache fails. Rank × thread
+limits and all smoke binding checks remain active. Consumers never re-query PBS
+or fall back to requested resources if the supplied snapshot is invalid.
+
+Compute-node inventory also uses this record instead of extra scheduler RPCs;
+the login-node setup inventory remains separate. Standalone Vanda validation
+without a pre-exported snapshot performs its initial verification once and saves
+`distributed-validation/allocation-snapshot.json` (inside its chosen output
+directory) for all its children. The validation report records the snapshot path
+and checksum. Do not manually point a new job at an old job's snapshot.
 
 The job builds separate real serial/MPI/hybrid executables in its own `build/`,
 runs CTest and communication/binding smoke, then runs the complete matrix.

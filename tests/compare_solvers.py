@@ -61,6 +61,8 @@ def main():
         sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
         from pbs_allocation import inspect_allocation
         from mpi_launcher import cpu_limit
+        # Reuse the job's verified snapshot, while rechecking identity and live
+        # CPU limits in this child. Never re-query the scheduler per comparison.
         if (a.ranks if prefixes[1] else 1)*a.threads>cpu_limit(inspect_allocation(1)):
             p.error('comparison ranks × threads exceeds the actual PBS allocation')
     evidence=[]

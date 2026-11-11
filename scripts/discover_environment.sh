@@ -13,7 +13,14 @@ project3_discover() (
     for tool in c++ g++ clang++ cmake python3 mpicxx mpirun qstat qsub sbatch srun lscpu; do
         command -v "$tool" >> "$out/tools.txt" 2>&1 || true
     done
-    if command -v qstat >/dev/null && command -v qsub >/dev/null; then
+    if [[ -n ${VANDA_ALLOCATION_SNAPSHOT:-} ]]; then
+        # Compute jobs already verified their allocation. Do not add scheduler
+        # RPCs for inventory or per-case validation after that startup query.
+        python3 "$(dirname "${BASH_SOURCE[0]}")/pbs_allocation.py" --cpus 1 \
+            --output "$out/pbs-allocation.json" > "$out/allocation-check.txt" || exit 1
+        printf 'pbs\n' > "$out/scheduler.txt"
+        printf 'Allocation verified at job startup; scheduler inventory not re-queried.\n' > "$out/scheduler-version.txt"
+    elif command -v qstat >/dev/null && command -v qsub >/dev/null; then
         qstat --version > "$out/scheduler-version.txt" 2>&1 || true
         qstat -Bf > "$out/pbs-server.txt" 2>&1
         if [[ $? -eq 0 ]]; then printf 'pbs\n' > "$out/scheduler.txt"; fi

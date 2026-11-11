@@ -53,6 +53,8 @@ VANDA_MPI_LAUNCHER=single-node bash -l "$PWD/scripts/submit_vanda.sh" hybrid
 
 Jobs load GCC/11.3.0, CMake/3.24.3-GCCcore-11.3.0 and OpenMPI/4.1.4-GCC-11.3.0, use C++17 Release -O3 without fast-math, and build/test/benchmark only inside PBS allocations. The default verified single-node workaround derives `--host HOST:SLOTS` from actual PBS CPUs; `VANDA_MPI_LAUNCHER=pbs` preserves the original hostfile alternative. Every controlled launch enforces ranks × threads within the allocated/cpuset/physical-core limit.
 
+PBS allocation is queried once at job startup (up to three bounded attempts), then recorded in a checksummed, job-specific snapshot. All validation children reuse it while rechecking job/host/nodefile identity and live CPU affinity/physical-core limits. No scheduler query is made for each grid comparison. The user reported job 1540875 passing CTest, MPI smoke and 312 comparisons before a scheduler timeout prevented the next solver launch; this is a partial Vanda validation, not a full pass. See the [rerun commands](report/vanda-runbook.md#rerun-after-the-allocation-query-fix) for the existing isolated checkout.
+
 Validation uses eight CPUs with shared placement; benchmark requests eight CPUs exclusively by default (overridable with `VANDA_PLACEMENT=shared`). Jobs freeze submitted source and never require compute-node Git. Every job uses a new directory, preserving existing OpenMP and upstream MPI evidence. Hybrid timing reruns validation and requires successful Vanda evidence for the exact serial/hybrid binaries, launch mode and all configurations. Defaults are fixed K=1000, N=128/256/512/1024, 1x1/2x1/4x1/8x1/4x2/2x4/1x8, one warm-up and three repetitions, plus a same-node one-core serial baseline. No new Vanda hybrid runtime or speedup is claimed yet.
 
 See [the runbook](report/vanda-runbook.md) for status checks, exact archive/download commands and plots from actual returned measurements. Keep the old OpenMP checkout and Person A's directory unchanged.
@@ -95,6 +97,8 @@ The launcher above is a functional-test example; choose binding arguments for th
 Current automated tests use an independent scalar Python oracle, a closed-form discrete sine mode, manually calculated N=1 update, 1/2/4/8 threads, odd/even iteration counts, zero boundaries, asymmetric coordinates, independently recomputed metrics, convergence at N=32/64/128, non-convergence, invalid input and second-order refinement. The C++ row-kernel test uses nonzero halos and 3 local rows. These do **not** substitute for testing Member A/B executables or MPI communication.
 
 After a logged build, `python3 tests/test_pipeline.py` additionally checks collection/analysis and resource/provenance guards. The full retained-grid MPI/hybrid matrix is in `scripts/validate_distributed.py`, with serial and MPI-only references; it supports actual PBS runs and explicitly labeled local MPI correctness runs. Sanitizer validation and accuracy evidence are recorded under `results/local/`.
+
+`python3 tests/test_pbs_allocation.py` and `python3 tests/test_allocation_cache_workflow.py` test scheduler timeout/retry fixtures, cache integrity/identity, current CPU limits, and snapshot propagation through the complete validation-driver matrix. A real child comparison and environment inventory are also exercised with a deliberately unavailable scheduler. These infrastructure fixtures are not Vanda solver results.
 
 ## Benchmarks and plots
 

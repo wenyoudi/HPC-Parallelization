@@ -27,7 +27,9 @@ STATUS_PY
 trap finish EXIT
 source scripts/vanda-env.sh
 phase=allocation
-python3 scripts/pbs_allocation.py --cpus "${VANDA_CPUS:-8}" --output "$jobdir/allocation.json"
+python3 scripts/pbs_allocation.py --refresh --cpus "${VANDA_CPUS:-8}" --output "$jobdir/allocation.json"
+export VANDA_ALLOCATION_SNAPSHOT="$jobdir/allocation.json"
+export VANDA_ALLOCATION_SHA256="$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' "$VANDA_ALLOCATION_SNAPSHOT")"
 source scripts/discover_environment.sh "$jobdir/compute-environment"
 cmake --version > "$jobdir/compute-environment/cmake.txt"
 mpicxx --showme > "$jobdir/compute-environment/mpi-wrapper.txt"

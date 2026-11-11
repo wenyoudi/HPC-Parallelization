@@ -9,7 +9,7 @@ import platform
 import subprocess
 import sys
 from mpi_launcher import MODES,cpu_limit,launcher
-from pbs_allocation import inspect_allocation
+from pbs_allocation import inspect_allocation,save_allocation_snapshot,snapshot_environment,SNAPSHOT_ENV,SNAPSHOT_SHA_ENV
 
 
 def sha(path):
@@ -46,7 +46,19 @@ def main():
             allowed_os_cpus=sorted(os.sched_getaffinity(0)) if hasattr(os,'sched_getaffinity') else None)
     budget=cpu_limit(allocation)
     a.output.mkdir(parents=True,exist_ok=False)
+    child_env=dict(os.environ)
+    if a.site=='vanda':
+        if not child_env.get(SNAPSHOT_ENV):
+            snapshot=a.output/'allocation-snapshot.json'
+            digest=save_allocation_snapshot(snapshot,allocation)
+            child_env=snapshot_environment(snapshot,digest,child_env)
+        # Existing snapshots were verified by inspect_allocation above. Preserve
+        # their expected digest rather than endorsing any later file mutation.
+        snapshot_receipt=dict(path=child_env[SNAPSHOT_ENV],sha256=child_env[SNAPSHOT_SHA_ENV])
+    else:
+        snapshot_receipt=None
     report=dict(passed=False,site=a.site,allocation=allocation,
+        allocation_snapshot=snapshot_receipt,
         launcher_mode=a.launcher_mode if a.site=='vanda' else 'custom-local',
         binary_sha256={name:sha(getattr(a,name)) for name in ['serial','mpi','hybrid'] if getattr(a,name)},
         checks=[],not_run_due_to_allocation=[],
@@ -83,7 +95,7 @@ def main():
                         if reference=='mpi': cmd += ['--reference-launcher-json',json.dumps(launch(ranks,1))]
                         if mode=='limit': cmd += ['--expect-nonconvergence','--max-iters','1','--tol','1e-15']
                         if problem=='asymmetric': cmd.append('--asymmetric')
-                        run=subprocess.run(cmd,capture_output=True,text=True,timeout=300)
+                        run=subprocess.run(cmd,env=child_env,capture_output=True,text=True,timeout=300)
                         (a.output/f'{case}.stdout.log').write_text(run.stdout)
                         (a.output/f'{case}.stderr.log').write_text(run.stderr)
                         report['checks'].append(dict(case=case,command=cmd,passed=run.returncode==0,
@@ -103,7 +115,7 @@ def main():
             failures.append(('output-overwrite',['--n','10','--mode','fixed','--iterations','1','--output',str(existing)]))
             for name,options in failures:
                 cmd=launch(ranks,1)+[executable]+options
-                run=subprocess.run(cmd,env=dict(os.environ,OMP_NUM_THREADS='1',OMP_DYNAMIC='FALSE'),
+                run=subprocess.run(cmd,env=dict(child_env,OMP_NUM_THREADS='1',OMP_DYNAMIC='FALSE'),
                                    capture_output=True,text=True,timeout=60)
                 case=f'{implementation}-{name}'
                 (a.output/f'{case}.stdout.log').write_text(run.stdout)
