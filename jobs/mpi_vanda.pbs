@@ -1,0 +1,25 @@
+#!/bin/bash
+#PBS -N poisson_mpi
+#PBS -l select=1:ncpus=8:mem=8gb
+#PBS -l walltime=01:00:00
+#PBS -j oe
+set -euo pipefail
+: "${PBS_JOBID:?Submit with qsub on Vanda}"
+cd "${PBS_O_WORKDIR:?Missing submission directory}"
+source "${HPC_SETUP:-config/vanda_mpi_env.sh}"
+hostname
+module list 2>&1
+mpicxx --version
+mpirun --version
+cmake -S . -B build-mpi-vanda -DCMAKE_BUILD_TYPE=Release -DBUILD_MPI=ON
+cmake --build build-mpi-vanda --parallel 2
+ctest --test-dir build-mpi-vanda --output-on-failure
+run="results/hpc/mpi-${PBS_JOBID}"
+python3 scripts/validate_mpi.py --serial build-mpi-vanda/poisson_serial \
+  --mpi build-mpi-vanda/poisson_mpi --ranks 1 2 3 4 8 --output-dir "$run/validation"
+# Validation only by default. First inspect the small-grid job before enabling.
+if [[ "${RUN_BENCHMARK:-0}" == 1 ]]; then
+  python3 scripts/benchmark_mpi.py --serial build-mpi-vanda/poisson_serial \
+    --mpi build-mpi-vanda/poisson_mpi --validation "$run/validation/validation.json" \
+    --output-dir "$run/benchmark"
+fi

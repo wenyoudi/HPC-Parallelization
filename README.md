@@ -1,5 +1,16 @@
 # HPC Parallelization of a Two-Dimensional Poisson Solver
 
+## MPI work (Member B)
+
+MPI source, validation, Vanda PBS job and strong-scaling collection are available
+on `feature/mpi-poisson`. See [MPI build instructions and hybrid
+handoff](docs/mpi_handoff.md). Cluster numerical validation and benchmarks remain
+pending; no MPI performance results are claimed yet.
+
+The MPI report draft is in [report/mpi_sections.md](report/mpi_sections.md).
+After real benchmarks, `scripts/analyze_mpi.py` exports runtime, speedup and
+efficiency figures directly from raw measurement records.
+
 This project investigates the correctness, runtime, and parallel efficiency of
 Jacobi iteration for a two-dimensional Poisson problem. The implementation uses
 C++17, with MPI for distributed-memory parallelism and OpenMP for shared-memory
@@ -18,7 +29,8 @@ the parallel design.
 | Serial Jacobi solver | Implemented; correctness tests passed locally and on Vanda |
 | Numerical tests and full-grid comparison tool | Available |
 | Serial benchmark collection and PBS workflow | Available; formal benchmark results pending |
-| MPI-only, OpenMP-only, and hybrid implementations | Pending integration |
+| MPI-only implementation | Source and scripts available; cluster compilation/validation pending |
+| OpenMP-only and hybrid implementations | Maintained on C's feature/openmp-hybrid branch; hybrid integration pending |
 | Parallel validation, scaling results, and final report | Pending completion |
 
 Commands below apply to the files currently included in this checkout. Parallel
