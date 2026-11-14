@@ -1,0 +1,10 @@
+*.sh text eol=lf
+*.pbs text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+.gitattributes text eol=lf
+*.png binary
+*.pdf binary
+# Preserve original evidence bytes: validation hashes must survive checkout.
+results/vanda/** -text -whitespace
+results/hpc/** -text -whitespace

@@ -4,15 +4,27 @@
 
 Implementation and execution scripts are supplied on `feature/mpi-poisson`, based
 on A's serial commit `0e20822`. A's solver and mathematical contract are unchanged.
-**MPI compilation, numerical validation and performance measurements on Vanda
-remain pending.** No MPI speedup or correctness result is claimed here.
+**MPI compilation, validation and single-node scaling completed on Vanda.** Job
+`1539665.stdct-mgmt-02` ran on GN-A40-075 using GCC 11.3.0 / Open MPI 4.1.4.
+All 162 MPI checks passed. Independent local audit confirmed 144 full-grid pairs
+with max difference 0, second-order refinement, matching validation/binary hashes,
+45 measured timing records and distinct per-rank core bindings. Benchmark source
+revision: `0e1c267`, with a clean working tree at collection time.
+
+Results and interpretation: `report/mpi_sections.md`; figures:
+`report/figures/mpi-vanda-1539665/`; original evidence:
+`results/vanda/mpi-1539665.stdct-mgmt-02/`. Three repetitions were measured per
+configuration; these are single-node fixed-work results through eight ranks.
+MPI-one-rank is faster than serial, so both speedup baselines are provided.
+Hybrid results and group-level final verification are outside this MPI-only record.
 
 Local checks: 15 Python tooling tests passed (launch policy, allocation guards,
 evidence parsing and scaling calculations), all Python sources passed compileall, and git diff --check
-passed. These are tooling checks, not MPI numerical evidence. Local CMake
+passed. These are tooling checks, not MPI numerical evidence. During initial development, local CMake
 configuration could not complete because both discovered MinGW C++ executables
 failed to start with Windows DLL relocation error 623. No usable MPI runtime was
-found locally. Do not report a successful C++ build based on these checks.
+found locally. Successful C++ compilation is established by the later Vanda job,
+not by those Windows tooling checks.
 
 C's `mpi_launcher.py` and `pbs_allocation.py` are copied verbatim from commit
 `2ea8a5a`. The environment module names and single-node launcher workaround come
@@ -32,7 +44,8 @@ qsub jobs/mpi_vanda.pbs
 The PBS job builds both variants and runs A's serial tests plus MPI validation on
 one eight-core compute node. The job must be submitted from the repository root.
 Do not run MPI benchmarks on the login node. Inspect the job output and
-`results/hpc/mpi-JOBID/validation/validation.json` before enabling benchmarks:
+`results/hpc/mpi-JOBID/validation/validation.json` before enabling benchmarks
+for a changed solver or environment:
 
 ```bash
 qsub -v RUN_BENCHMARK=1 jobs/mpi_vanda.pbs
@@ -53,6 +66,10 @@ python3 scripts/validate_mpi.py --serial build-mpi/poisson_serial \
   --mpi build-mpi/poisson_mpi --ranks 1 2 3 4 \
   --launcher-json '["mpiexec","-n","{ranks}"]' --output-dir results/local/mpi-check
 ```
+
+The supplied template requests 8 GB, but the captured successful job allocation
+reports 55 GB. Use the metadata's actual allocation in the report; do not infer
+it from the template. All runs used only eight allocated physical CPU cores.
 
 The benchmark script deliberately requires a verified PBS allocation and a
 successful same-node validation report matching both binary SHA-256 hashes and
@@ -157,7 +174,8 @@ python scripts/analyze_mpi.py results/hpc/mpi-JOBID/benchmark \
   --output-dir results/hpc/mpi-JOBID/figures
 ```
 
-This exports runtime, speedup and efficiency as PNG/PDF, plus a recomputed summary
+This exports runtime, speedup and efficiency as PNG/PDF (including serial and
+MPI-one-rank baselines), plus a recomputed summary
 and provenance receipt. It rejects incomplete sweeps, mixed workloads, duplicate
 repetitions and missing serial baselines. Min–max error bars are descriptive,
 with the serial median held fixed for speedup/efficiency; they are not confidence
@@ -167,7 +185,19 @@ The extended validator retains the full serial/MPI CSVs in its `grids/` director
 adds N=10,K=100 and N=32,K=500 comparisons, and performs independent MPI continuum
 refinement on N=15,31,63. `report/mpi_sections.md` contains the design, an induction
 argument for correctness, the measurement protocol and the performance model.
-Its experimental section is explicitly pending actual cluster evidence.
+Its experimental section now contains the audited Vanda results and their limitations.
+
+Reproduce the independent audit and figures from the retained original evidence:
+
+```bash
+python scripts/audit_mpi_results.py results/vanda/mpi-1539665.stdct-mgmt-02 \
+  --output /tmp/mpi-1539665-audit.json
+python scripts/analyze_mpi.py results/vanda/mpi-1539665.stdct-mgmt-02/benchmark \
+  --output-dir /tmp/mpi-1539665-figures
+```
+
+Both output paths must be fresh. The report images are derived locally from
+original Vanda timings, not locally measured runtimes.
 
 ## AI usage draft
 

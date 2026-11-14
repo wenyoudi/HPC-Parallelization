@@ -46,6 +46,7 @@ def summarize(records):
         mpi1 = groups.get((n,'mpi',1))
         summary.append(dict(n=n,implementation=kind,ranks=ranks,repeats=len(ts),median_seconds=med,
             min_seconds=min(ts),max_seconds=max(ts),serial_median_seconds=serial_time,
+            mpi1_median_seconds=statistics.median(mpi1.values()) if mpi1 else None,
             speedup_vs_serial=serial_time/med, efficiency_vs_serial=serial_time/med/ranks,
             speedup_vs_mpi1=statistics.median(mpi1.values())/med if mpi1 and kind=='mpi' else None))
     return summary, experiment
@@ -59,34 +60,41 @@ def plot(summary, experiment, destination):
                          'pdf.fonttype':42, 'savefig.dpi':180})
     ns = sorted({row['n'] for row in summary})
     ranks = sorted({row['ranks'] for row in summary if row['implementation']=='mpi'})
-    for metric, ylabel in [('runtime','Solve time (seconds)'), ('speedup','Speedup vs serial'),
-                           ('efficiency','Parallel efficiency (%)')]:
+    styles = {n:(color,marker) for n,color,marker in zip(ns,['#2463A5','#C46B20','#71833A'],['o','s','^'])}
+    if len(ns)>3: raise ValueError('Plotting supports at most three grid sizes; add explicit styles for more')
+    specs = [('runtime','Solve time (seconds)'), ('speedup','Speedup vs serial'),
+             ('efficiency','Efficiency vs serial (%)')]
+    if 1 in ranks:
+        specs += [('speedup_mpi1','Speedup vs MPI 1 rank'), ('efficiency_mpi1','Efficiency vs MPI 1 rank (%)')]
+    for metric, ylabel in specs:
         fig, ax = plt.subplots(figsize=(6.5,4.2), layout='constrained')
         for n in ns:
             rows = sorted((row for row in summary if row['n']==n and row['implementation']=='mpi'), key=lambda x:x['ranks'])
             x = [row['ranks'] for row in rows]
+            color,marker = styles[n]
             if metric=='runtime':
                 y = [row['median_seconds'] for row in rows]
                 low = [row['min_seconds'] for row in rows]; high = [row['max_seconds'] for row in rows]
             else:
-                y = [row['speedup_vs_serial'] for row in rows]
-                low = [row['serial_median_seconds']/row['max_seconds'] for row in rows]
-                high = [row['serial_median_seconds']/row['min_seconds'] for row in rows]
-                if metric=='efficiency':
+                baseline = 'mpi1_median_seconds' if metric.endswith('_mpi1') else 'serial_median_seconds'
+                y = [row[baseline]/row['median_seconds'] for row in rows]
+                low = [row[baseline]/row['max_seconds'] for row in rows]
+                high = [row[baseline]/row['min_seconds'] for row in rows]
+                if metric.startswith('efficiency'):
                     y,low,high = [[100*v/r for v,r in zip(values,x)] for values in [y,low,high]]
             line = ax.errorbar(x,y,yerr=[[v-l for v,l in zip(y,low)],[h-v for h,v in zip(high,y)]],
-                              marker='o',capsize=3,label=f'N={n}')
+                              color=color,marker=marker,capsize=3,label=f'N={n}')
             if metric=='runtime': ax.axhline(rows[0]['serial_median_seconds'], color=line[0].get_color(),
                 linestyle=':', alpha=.65, label=f'Serial N={n}')
-        if metric=='speedup': ax.plot(ranks,ranks,'--',color='#777777',label='Ideal linear speedup')
-        if metric=='efficiency': ax.axhline(100,linestyle='--',color='#777777',label='Ideal efficiency')
+        if metric.startswith('speedup'): ax.plot(ranks,ranks,'--',color='#777777',label='Ideal linear speedup')
+        if metric.startswith('efficiency'): ax.axhline(100,linestyle='--',color='#777777',label='Ideal efficiency')
         if metric=='runtime': ax.set_yscale('log')
         else: ax.set_ylim(bottom=0)
         ax.set_xscale('log', base=2); ax.set_xticks(ranks, labels=[str(r) for r in ranks])
         ax.set_xlabel('MPI ranks (one thread per rank)'); ax.set_ylabel(ylabel)
         ax.set_title(f'MPI strong scaling — {experiment[0]}, K={experiment[2]}')
         ax.grid(axis='y',alpha=.2); ax.legend(fontsize=8)
-        fig.text(.01,-.04,'Median of fresh runs; bars show min–max with serial median held fixed.',fontsize=7)
+        fig.text(.01,-.04,'Median of fresh runs; min–max bars; reference median held fixed for ratios.',fontsize=7)
         for ext in ['png','pdf']: fig.savefig(destination/f'mpi_{metric}.{ext}',bbox_inches='tight')
         plt.close(fig)
 
@@ -112,6 +120,6 @@ def main():
     plot(summary,experiment,a.output_dir)
     (a.output_dir/'provenance.json').write_text(json.dumps(dict(source=str(a.benchmark_dir.resolve()),
         metadata=metadata, raw_records=len(records)), indent=2)+'\n')
-    print(f'Exported three scaling plots (PNG and PDF) to {a.output_dir}')
+    print(f'Exported scaling plots (PNG and PDF, serial and MPI-1 baselines) to {a.output_dir}')
 
 if __name__ == '__main__': main()

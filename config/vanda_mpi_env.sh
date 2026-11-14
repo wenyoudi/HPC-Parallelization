@@ -1,5 +1,5 @@
 # Compiler/MPI versions taken from C's vanda-env.sh at commit 2ea8a5a.
-# This MPI solver has not yet been compiled/tested on Vanda.
+# Used successfully for MPI validation/benchmarks in Vanda job 1539665 (11 Nov 2026).
 module load GCC/11.3.0 || return
 module load CMake/3.24.3-GCCcore-11.3.0 || return
 module load OpenMPI/4.1.4-GCC-11.3.0 || return

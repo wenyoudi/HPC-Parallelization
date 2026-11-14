@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "job_id": "1539665.stdct-mgmt-02",
+  "node": "GN-A40-075",
+  "validation_checks": 162,
+  "grid_pairs": 144,
+  "max_absolute_grid_error": 0.0,
+  "refinement": {
+    "ranks": 8,
+    "n": [
+      15,
+      31,
+      63
+    ],
+    "errors": [
+      0.010989314918715465,
+      0.002734954824313629,
+      0.0006829683607219028
+    ],
+    "ratios": [
+      4.018097418290399,
+      4.004511748425301
+    ]
+  },
+  "measurement_records": 45,
+  "configurations": 15,
+  "hashes_match": true,
+  "raw_summaries_match": true,
+  "distinct_core_bindings_verified": true,
+  "benchmark_diagnostics": {
+    "256": {
+      "residual_linf": {
+        "min": 40.93826245381331,
+        "max": 40.93826245381331
+      },
+      "error_linf": {
+        "min": 0.8295754278859153,
+        "max": 0.8295754278859153
+      }
+    },
+    "512": {
+      "residual_linf": {
+        "min": 47.08757025707879,
+        "max": 47.08757025707879
+      },
+      "error_linf": {
+        "min": 0.9541931840243736,
+        "max": 0.9541931840243736
+      }
+    },
+    "1024": {
+      "residual_linf": {
+        "min": 48.771823484432794,
+        "max": 48.771823484432794
+      },
+      "error_linf": {
+        "min": 0.9883237456958558,
+        "max": 0.9883237456958558
+      }
+    }
+  },
+  "source_sha256": {
+    "benchmark\\raw.jsonl": "053518f7146b6f84bb42020e0aa1d04d32f84ae47f64c649888fc6290f5c5475",
+    "benchmark\\metadata.json": "0175c1650d498a90615d3426a59c2b4b9e6233136c479f725ee109b150ca2554",
+    "benchmark\\summary.csv": "216bb1091f32bcdfb16abaf9230932fc9d0339a63ca8b1fb0befbc717b2f563b",
+    "validation\\validation.json": "d746aa32452dddedfb4c25b6951f5377e07244b006872a623c99f8418cb04da6"
+  }
+}

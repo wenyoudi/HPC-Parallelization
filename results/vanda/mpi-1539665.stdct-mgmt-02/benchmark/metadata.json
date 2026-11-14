@@ -1,0 +1,65 @@
+{
+  "timestamp_utc": "2026-11-11T03:15:41.168312+00:00",
+  "allocation": {
+    "job_id": "1539665.stdct-mgmt-02",
+    "hostname": "GN-A40-075",
+    "nodes": [
+      "gn-a40-075.stdct.loc"
+    ],
+    "resources": {
+      "job_state": "R",
+      "queue": "batch_cpu",
+      "exec_host": "GN-A40-075/3*8",
+      "exec_vnode": "(GN-A40-075[1]:ncpus=8:mem=55gb)",
+      "Resource_List.mem": "55gb",
+      "Resource_List.ncpus": "8",
+      "Resource_List.nodect": "1",
+      "Resource_List.place": "free",
+      "Resource_List.select": "1:ncpus=8:mem=55GB",
+      "Resource_List.walltime": "01:00:00"
+    },
+    "allowed_os_cpus": [
+      17,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29,
+      31
+    ],
+    "visible_physical_cores": 8,
+    "requested_cpus": 8
+  },
+  "binary_sha256": {
+    "serial": "8e264285d379a07a9630e6634cda974efdef9c7427322ab773b8276f8a264a4d",
+    "mpi": "c770330d73c2017294d987417f27282cc3443e32e6f0e0fbffacae9b67f45154"
+  },
+  "validation_sha256": "d746aa32452dddedfb4c25b6951f5377e07244b006872a623c99f8418cb04da6",
+  "revision": "0e1c267eba6d980ab9513411f911cd88f677c988",
+  "git_status": "",
+  "compiler": "g++ (GCC) 11.3.0\nCopyright (C) 2021 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "mpi": "mpirun (Open MPI) 4.1.4\n\nReport bugs to http://www.open-mpi.org/community/help/",
+  "cpu": "Architecture:                         x86_64\nCPU op-mode(s):                       32-bit, 64-bit\nAddress sizes:                        46 bits physical, 57 bits virtual\nByte Order:                           Little Endian\nCPU(s):                               72\nOn-line CPU(s) list:                  0-71\nVendor ID:                            GenuineIntel\nModel name:                           Intel(R) Xeon(R) Platinum 8452Y\nCPU family:                           6\nModel:                                143\nThread(s) per core:                   1\nCore(s) per socket:                   36\nSocket(s):                            2\nStepping:                             8\nCPU(s) scaling MHz:                   75%\nCPU max MHz:                          3200.0000\nCPU min MHz:                          800.0000\nBogoMIPS:                             4000.00\nFlags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 cat_l2 cdp_l3 cdp_l2 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect avx_vnni avx512_bf16 wbnoinvd dtherm ida arat pln pts hwp hwp_act_window hwp_epp hwp_pkg_req hfi vnmi avx512vbmi umip pku ospke waitpkg avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid bus_lock_detect cldemote movdiri movdir64b enqcmd fsrm md_clear serialize tsxldtrk pconfig arch_lbr ibt amx_bf16 avx512_fp16 amx_tile amx_int8 flush_l1d arch_capabilities ibpb_exit_to_user\nVirtualization:                       VT-x\nL1d cache:                            3.4 MiB (72 instances)\nL1i cache:                            2.3 MiB (72 instances)\nL2 cache:                             144 MiB (72 instances)\nL3 cache:                             135 MiB (2 instances)\nNUMA node(s):                         2\nNUMA node0 CPU(s):                    0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70\nNUMA node1 CPU(s):                    1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59,61,63,65,67,69,71\nVulnerability Gather data sampling:   Not affected\nVulnerability Itlb multihit:          Not affected\nVulnerability L1tf:                   Not affected\nVulnerability Mds:                    Not affected\nVulnerability Meltdown:               Not affected\nVulnerability Mmio stale data:        Not affected\nVulnerability Reg file data sampling: Not affected\nVulnerability Retbleed:               Not affected\nVulnerability Spec rstack overflow:   Not affected\nVulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI BHI_DIS_S\nVulnerability Srbds:                  Not affected\nVulnerability Tsx async abort:        Not affected\nVulnerability Vmscape:                Mitigation; IBPB before exit to userspace",
+  "cmake": "cmake version 3.24.3\n\nCMake suite maintained and supported by Kitware (kitware.com/cmake).",
+  "platform": "Linux-5.14.0-427.125.1.el9_4.x86_64-x86_64-with-glibc2.34",
+  "experiment": {
+    "serial": "build-mpi-vanda/poisson_serial",
+    "mpi": "build-mpi-vanda/poisson_mpi",
+    "validation": "results/hpc/mpi-1539665.stdct-mgmt-02/validation/validation.json",
+    "output_dir": "results/hpc/mpi-1539665.stdct-mgmt-02/benchmark",
+    "n": [
+      256,
+      512,
+      1024
+    ],
+    "ranks": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "iterations": 1000,
+    "repeats": 3
+  }
+}

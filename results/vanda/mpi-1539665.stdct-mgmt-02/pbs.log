@@ -1,0 +1,64 @@
+Loading GCC/11.3.0
+  Loading requirement: GCCcore/11.3.0 zlib/1.2.12-GCCcore-11.3.0
+    binutils/2.38-GCCcore-11.3.0
+Loading CMake/3.24.3-GCCcore-11.3.0
+  Loading requirement: ncurses/6.3-GCCcore-11.3.0 bzip2/1.0.8-GCCcore-11.3.0
+    OpenSSL/1.1 cURL/7.83.0-GCCcore-11.3.0 XZ/5.2.5-GCCcore-11.3.0
+    libarchive/3.6.1-GCCcore-11.3.0
+Loading OpenMPI/4.1.4-GCC-11.3.0
+  Loading requirement: numactl/2.0.14-GCCcore-11.3.0
+    libxml2/2.9.13-GCCcore-11.3.0 libpciaccess/0.16-GCCcore-11.3.0
+    hwloc/2.7.1-GCCcore-11.3.0 libevent/2.1.12-GCCcore-11.3.0
+    libfabric/1.15.1-GCCcore-11.3.0 PMIx/4.1.2-GCCcore-11.3.0
+    UCX/1.12.1-GCCcore-11.3.0 UCC/1.0.0-GCCcore-11.3.0
+GN-A40-075
+Currently Loaded Modulefiles:
+ 1) shared                           13) CMake/3.24.3-GCCcore-11.3.0       
+ 2) apptainer/1.4.1                  14) numactl/2.0.14-GCCcore-11.3.0     
+ 3) GCCcore/11.3.0                   15) libxml2/2.9.13-GCCcore-11.3.0     
+ 4) zlib/1.2.12-GCCcore-11.3.0       16) libpciaccess/0.16-GCCcore-11.3.0  
+ 5) binutils/2.38-GCCcore-11.3.0     17) hwloc/2.7.1-GCCcore-11.3.0        
+ 6) GCC/11.3.0                       18) libevent/2.1.12-GCCcore-11.3.0    
+ 7) ncurses/6.3-GCCcore-11.3.0       19) libfabric/1.15.1-GCCcore-11.3.0   
+ 8) bzip2/1.0.8-GCCcore-11.3.0       20) PMIx/4.1.2-GCCcore-11.3.0         
+ 9) OpenSSL/1.1                      21) UCX/1.12.1-GCCcore-11.3.0         
+10) cURL/7.83.0-GCCcore-11.3.0       22) UCC/1.0.0-GCCcore-11.3.0          
+11) XZ/5.2.5-GCCcore-11.3.0          23) OpenMPI/4.1.4-GCC-11.3.0          
+12) libarchive/3.6.1-GCCcore-11.3.0  
+g++ (GCC) 11.3.0
+Copyright (C) 2021 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+mpirun (Open MPI) 4.1.4
+
+Report bugs to http://www.open-mpi.org/community/help/
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /nfs/home/svu/le.pan/DSA5208_Proj3/HPC-Parallelization/build-mpi-vanda
+Consolidate compiler generated dependencies of target poisson_core
+[ 25%] Built target poisson_core
+Consolidate compiler generated dependencies of target poisson_serial
+Consolidate compiler generated dependencies of target poisson_mpi_core
+[ 75%] Built target poisson_serial
+[ 75%] Built target poisson_mpi_core
+Consolidate compiler generated dependencies of target poisson_mpi
+[100%] Built target poisson_mpi
+Internal ctest changing into directory: /nfs/home/svu/le.pan/DSA5208_Proj3/HPC-Parallelization/build-mpi-vanda
+Test project /nfs/home/svu/le.pan/DSA5208_Proj3/HPC-Parallelization/build-mpi-vanda
+    Start 1: serial_correctness
+1/5 Test #1: serial_correctness ...............   Passed    0.43 sec
+    Start 2: mpi_workflow_tooling
+2/5 Test #2: mpi_workflow_tooling .............   Passed    0.18 sec
+    Start 3: mpi_launcher_tooling
+3/5 Test #3: mpi_launcher_tooling .............   Passed    0.08 sec
+    Start 4: pbs_allocation_tooling
+4/5 Test #4: pbs_allocation_tooling ...........   Passed    0.19 sec
+    Start 5: analyze_mpi_tooling
+5/5 Test #5: analyze_mpi_tooling ..............   Passed    0.09 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   1.01 sec
+Passed 162 MPI checks; evidence: results/hpc/mpi-1539665.stdct-mgmt-02/validation/validation.json
+Saved strong-scaling evidence to results/hpc/mpi-1539665.stdct-mgmt-02/benchmark

@@ -4,12 +4,16 @@
 
 MPI source, validation, Vanda PBS job and strong-scaling collection are available
 on `feature/mpi-poisson`. See [MPI build instructions and hybrid
-handoff](docs/mpi_handoff.md). Cluster numerical validation and benchmarks remain
-pending; no MPI performance results are claimed yet.
+handoff](docs/mpi_handoff.md). Vanda job `1539665.stdct-mgmt-02` compiled serial/MPI,
+passed 162 MPI checks, and collected 45 measured timings on GN-A40-075.
 
-The MPI report draft is in [report/mpi_sections.md](report/mpi_sections.md).
-After real benchmarks, `scripts/analyze_mpi.py` exports runtime, speedup and
-efficiency figures directly from raw measurement records.
+The measured MPI report section is in [report/mpi_sections.md](report/mpi_sections.md).
+Five PNG/PDF figures (runtime, serial-relative and MPI-one-rank-relative scaling)
+are in [report/figures/mpi-vanda-1539665](report/figures/mpi-vanda-1539665/).
+Original records, grids and the audit receipt are retained in
+[results/vanda/mpi-1539665.stdct-mgmt-02](results/vanda/mpi-1539665.stdct-mgmt-02/).
+Single-rank MPI is faster than the serial reference; read both baselines when
+interpreting efficiency above 100%.
 
 This project investigates the correctness, runtime, and parallel efficiency of
 Jacobi iteration for a two-dimensional Poisson problem. The implementation uses
@@ -28,14 +32,13 @@ the parallel design.
 | --- | --- |
 | Serial Jacobi solver | Implemented; correctness tests passed locally and on Vanda |
 | Numerical tests and full-grid comparison tool | Available |
-| Serial benchmark collection and PBS workflow | Available; formal benchmark results pending |
-| MPI-only implementation | Source and scripts available; cluster compilation/validation pending |
+| Serial benchmark collection and PBS workflow | Same-node serial baselines measured for N=256,512,1024 |
+| MPI-only implementation | Compiled on Vanda; 162 checks passed; single-node ranks 1/2/4/8 measured |
 | OpenMP-only and hybrid implementations | Maintained on C's feature/openmp-hybrid branch; hybrid integration pending |
-| Parallel validation, scaling results, and final report | Pending completion |
+| MPI figures and report section | Available with audited raw evidence; group integration/review pending |
 
-Commands below apply to the files currently included in this checkout. Parallel
-build targets and launch commands will be documented when those implementations
-are integrated. Detailed verification records are maintained in
+Commands below describe A's serial workflow. MPI build/launch instructions are
+in the handoff linked above. Detailed verification records are maintained in
 [docs/validation_status.md](docs/validation_status.md).
 
 ## Mathematical problem
